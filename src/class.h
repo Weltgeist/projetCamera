@@ -1,4 +1,5 @@
-
+#ifndef CLASS_H
+#define CLASS_H
 
 class Resolution
 {
@@ -25,3 +26,5 @@ public:
 	void set_fps(double a){fps=a; return;}
 
 };
+
+#endif
