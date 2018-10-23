@@ -1,6 +1,5 @@
 #ifndef FONCTION_H
 #define FONCTION_H
-#include "constante.h"
 #include<cmath>
 #include<cstring>
 #include<cstdio>
@@ -17,14 +16,20 @@
 #include<opencv2/videoio.hpp>
 #include<time.h>
 #include "class.h"
+#include "constante.h"
 
 
+int detectCamera();
 //void populerResolutions(ResolutionFPS* rfps);
 
 void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2]);
 //
-//void populerFPS();
+int populerFPS(ResolutionFPS (&rfps)[13]);
 //
 //void capture5SEC(int choix);
+int choixUser(ResolutionFPS (&rfps)[13]);
+
+void enregistVideo(ResolutionFPS (&rfps)[13],int choix);
+
 
 #endif

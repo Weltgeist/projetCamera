@@ -1,5 +1,15 @@
 //#include<string>
 #include "constante.h"
+#include<cmath>
+#include<cstring>
+#include<cstdio>
+#include<cstdlib>
+#include<math.h>
+#include<string>
+#include<stdio.h>
+#include<stdlib.h>
+
+using namespace std;
 
 //const string CAM_ID="046d:0825"
 //enum {LOW_W=160, LOW_H=120 ,HIGH_W=1280 ,HIGH_H=960}
