@@ -31,5 +31,11 @@ int choixUser(ResolutionFPS (&rfps)[13]);
 
 void enregistVideo(ResolutionFPS (&rfps)[13],int choix);
 
+//V.2.0 modulaire
+
+void initCapture(VideoCapture &capture,ResolutionFPS &rfps);
+
+void captureImage(VideoCapture &capture,Mat &frame);
+
 
 #endif

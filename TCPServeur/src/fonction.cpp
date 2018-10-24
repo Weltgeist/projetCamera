@@ -153,6 +153,17 @@ for (int i = 0; i < 5*((int)rfps[choix].fps); i++)
 
 }
 
+void captureImage(VideoCapture &capture,Mat &frame)
+{
+	capture >> frame;
+}
+
+void initCapture(VideoCapture &capture,ResolutionFPS &rfps) ///Besoin d'envoyer rfps[choix]
+{
+	capture.set(CV_CAP_PROP_FRAME_WIDTH,rfps.res.resX);
+	capture.set(CV_CAP_PROP_FRAME_HEIGHT,rfps.res.resY);
+}
+
 //{
 ////	string nom_capture;
 //
