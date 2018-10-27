@@ -18,6 +18,9 @@
 #include "class.h"
 #include "constante.h"
 
+using namespace cv;
+using namespace std;
+
 
 int detectCamera();
 //void populerResolutions(ResolutionFPS* rfps);

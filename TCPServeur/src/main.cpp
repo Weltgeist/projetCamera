@@ -44,15 +44,16 @@
 
 #define PORT 4099;
 
-
-using namespace std;
 using namespace cv;
+using namespace std;
+//using namespace sys;
 
 
-//const string CAM_ID="046d:0825";
-//const int NB_RES=13;
-//const int RES_TABLE[13][2]={{176,144},{160,120},{320,176},{320,240},{352,288},{432,240},{800,600},{864,480},{960,544},{960,720},{1184,656},{1280,720},{1280,960}};
-//
+
+const string CAM_ID="046d:0825";
+const int NB_RES=13;
+const int RES_TABLE[13][2]={{176,144},{160,120},{320,176},{320,240},{352,288},{432,240},{800,600},{864,480},{960,544},{960,720},{1184,656},{1280,720},{1280,960}};
+
 //
 //int main()
 //{
@@ -91,13 +92,14 @@ void error(const char *msg)
     exit(1);
 }
 
-using namespace cv;
-using namespace std;
-using namespace sys;
+
+
+
+
 
 int main(int argc, char *argv[])
 {
-		int choix;
+		int choix=7;
 		// fn detecter bonne camera (trouver id 046d:0825 dans les devices usb)
 		if (detectCamera()==1){
 
@@ -106,19 +108,22 @@ int main(int argc, char *argv[])
 		populerResolutions(rfps,RES_TABLE);
 
 		// fn calculer et populer les framerates
-		if (populerFPS(rfps)==1){
+		if (1/*populerFPS(rfps)==1*/){
 
 
 	/////////
+     VideoCapture capture(0);
      int sockfd, newsockfd, portno;
+     long int bytes;
+     int clientSock;
      socklen_t clilen;
      char buffer[1024];
      struct sockaddr_in serv_addr, cli_addr; // adress structure
      int n;
-     if (argc < 2) {
-         fprintf(stderr,"ERROR, no port provided\n");
-         exit(1);
-     }
+//     if (argc < 2) {
+//         fprintf(stderr,"ERROR, no port provided\n");
+//         exit(1);
+//     }
      //Create a socket()
      sockfd = socket(AF_INET, SOCK_STREAM, 0); //AFINET  == communication domain Ipv4, SOCK_STREAM is communication type(TCP in our case), 0 is  value for internet protocole
      if (sockfd < 0)
@@ -133,10 +138,12 @@ int main(int argc, char *argv[])
      if (bind(sockfd, (struct sockaddr *) &serv_addr,
               sizeof(serv_addr)) < 0)
               error("ERROR on binding");
+     cout << "ici";
      //Tell the system to allow connection made to that port with listen/ Mark the socket so it will listen for incomming connect
      listen(sockfd,5); //put the socket in passive mode and set 5 as the maximum number for queue
+     cout << "ici2";
      clilen = sizeof(cli_addr);
-     initCapture(capture,rfps);
+     initCapture(capture,rfps[choix]);
      //BOUCLE!!!!
      newsockfd = accept(sockfd,
                  (struct sockaddr *) &cli_addr,
@@ -151,19 +158,19 @@ int main(int argc, char *argv[])
 
      Mat frame; //
      //capture
-     captureImage(capture,frame)
+     captureImage(capture,frame);
      //reshape
      frame = (frame.reshape(0,1)); // to make it continuous
 
      int  imgSize = frame.total()*frame.elemSize();
 
      // Send data here
-     bytes = send(clientSock, frame.data, imgSize, 0))
+     bytes = send(clientSock, frame.data, imgSize, 0);
 
 
 
-//     Mat image(690,690,CV_8UC3,*buffer);
-//     imwrite("/home/securitas/images/prova.jpg",image);
+     Mat image(rfps[choix].res.resX,rfps[choix].res.resY,CV_8UC3,*buffer);
+    imwrite("/home/root/IMG_NOW.png",image);
 
 
      close(newsockfd);
