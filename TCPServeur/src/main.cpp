@@ -32,6 +32,9 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <arpa/inet.h>
+#include <vector>
+
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
@@ -98,7 +101,8 @@ void error(const char *msg)
 
 
 int main(int argc, char *argv[])
-{
+{		int tRes=1;
+		int mask=1;
 		int choix=7;
 		// fn detecter bonne camera (trouver id 046d:0825 dans les devices usb)
 		if (detectCamera()==1){
@@ -129,59 +133,82 @@ int main(int argc, char *argv[])
      if (sockfd < 0)
         error("ERROR opening socket");
      //Construct a local address structure
-     bzero((char *) &serv_addr, sizeof(serv_addr));
+     bzero((char *) &serv_addr, (uint)sizeof(serv_addr));
      portno = PORT;//DEFINE PORT 4099 to be used as default instead of arg[v]//atoi(argv[1]);
      serv_addr.sin_family = AF_INET;
      serv_addr.sin_addr.s_addr = INADDR_ANY;
      serv_addr.sin_port = htons(portno);
      //Assign a port to the number with bind() /Bind the local adress
      if (bind(sockfd, (struct sockaddr *) &serv_addr,
-              sizeof(serv_addr)) < 0)
+    		 (uint)sizeof(serv_addr)) < 0)
               error("ERROR on binding");
      cout << "ici";
-     //Tell the system to allow connection made to that port with listen/ Mark the socket so it will listen for incomming connect
+     //Tell the system to allow connection made to that port with listen/ Mark the socket so it will listen for incoming connect
      listen(sockfd,5); //put the socket in passive mode and set 5 as the maximum number for queue
      cout << "ici2";
      clilen = sizeof(cli_addr);
      initCapture(capture,rfps[choix]);
      //BOUCLE!!!!
-     newsockfd = accept(sockfd,
-                 (struct sockaddr *) &cli_addr,
-                 &clilen);
-     if (newsockfd < 0)
-          error("ERROR on accept");
-     bzero(buffer,1024);
-     //Decoder le uint32 ou le OK/Quit
+     while(1){
 
-     n = read(newsockfd,buffer,1023);
-     if (n < 0) error("ERROR reading from socket");
+		 newsockfd = accept(sockfd,
+					 (struct sockaddr *) &cli_addr,
+					 &clilen);
+		 if (newsockfd < 0)
+			  error("ERROR on accept");
+		 bzero(buffer,1024);
 
-     Mat frame; //
-     //capture
-     captureImage(capture,frame);
-     //reshape
-     frame = (frame.reshape(0,1)); // to make it continuous
-
-     int  imgSize = frame.total()*frame.elemSize();
-
-     // Send data here
-     bytes = send(clientSock, frame.data, imgSize, 0);
+		 //Decoder le uint32 ou le OK/Quit
+		 n = read(newsockfd,buffer,1023);
+		 if (n < 0) error("ERROR reading from socket");
+		 int result=conv(buffer);
+		 tRes=test(result);
+		 if (1){
 
 
+			 Mat frame; //
+			 //capture
+			 captureImage(capture,frame);
+			 //reshape
+			 frame = (frame.reshape(0,1)); // to make it continuous
 
-     Mat image(rfps[choix].res.resX,rfps[choix].res.resY,CV_8UC3,*buffer);
-    imwrite("/home/root/IMG_NOW.png",image);
+			 int  imgSize = frame.total()*frame.elemSize();
+
+			 // Send data here
+			 bytes = send(clientSock, frame.data, imgSize, 0);
+
+			 //    n = write(sockfd,image.data,image.total()*image.channels());
+			 //    if (n < 0)
+			 //         error("ERROR writing to socket");
 
 
-     close(newsockfd);
 
-     //FIN DE BOUCLE
+			 Mat image(rfps[choix].res.resX,rfps[choix].res.resY,CV_8UC3,*buffer);
+			 imwrite("/home/root/IMG_NOW.png",image);
+
+
+
+		 }
+		 else
+		 {
+
+
+			 tRes=0;
+
+		 }
+		 close(newsockfd);
+		 //FIN DE BOUCLE
+
+     }
+
      //Close communication
      close(sockfd);
 
+
+
      namedWindow( "Server", CV_WINDOW_AUTOSIZE );// Create a window for display.
-     imshow( "Server", image );
-     waitKey(0);
+     //imshow( "Server", image );
+
 
      ////////////////////
      ///

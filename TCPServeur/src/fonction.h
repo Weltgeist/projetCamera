@@ -27,18 +27,22 @@ int detectCamera();
 
 void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2]);
 //
-int populerFPS(ResolutionFPS (&rfps)[13]);
+//int populerFPS(ResolutionFPS (&rfps)[13]);
+////
+////void capture5SEC(int choix);
+//int choixUser(ResolutionFPS (&rfps)[13]);
 //
-//void capture5SEC(int choix);
-int choixUser(ResolutionFPS (&rfps)[13]);
-
-void enregistVideo(ResolutionFPS (&rfps)[13],int choix);
-
-//V.2.0 modulaire
+//void enregistVideo(ResolutionFPS (&rfps)[13],int choix);
+//
+////V.2.0 modulaire
 
 void initCapture(VideoCapture &capture,ResolutionFPS &rfps);
 
 void captureImage(VideoCapture &capture,Mat &frame);
+
+int conv(char buffer[]);
+
+int test(int result);
 
 
 #endif

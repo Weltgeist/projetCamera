@@ -4,11 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-//#include <string.h>
+#include <stdint.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <vector>
 #include <opencv2/opencv.hpp>
 //#include <opencv2/core/core.hpp>
 //#include <opencv2/highgui/highgui.hpp>
@@ -26,6 +28,7 @@ using namespace cv;
 using namespace std;
 
 #define PORT 4099;
+#define ELE4205_OK 0b1;
 
 
 const int NB_RES=13;
@@ -39,13 +42,14 @@ void error(const char *msg)
 
 int main(int argc, char *argv[])
 {
+	bool go=1;
 	int choix=7;
     int sockfd, portno, n;
     long int bytes;
     int connectSock;
     struct sockaddr_in serv_addr;
     struct hostent *server;
-
+    uint32_t messages = ELE4205_OK;
     char buffer[256];
 
 	// fn populer les resolutions
@@ -72,8 +76,51 @@ int main(int argc, char *argv[])
          (char *)&serv_addr.sin_addr.s_addr,
          server->h_length);
     serv_addr.sin_port = htons(portno);
-    if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0)
-        error("ERROR connecting");
+
+    while(go){
+
+		if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0)
+			error("ERROR connecting");
+
+		sprintf(buffer,"%i",messages);
+
+		n = write(sockfd,buffer,sizeof(messages));
+		if (n < 0)
+			 error("ERROR writing to socket");
+
+		// receive image
+		//
+
+		Mat  img = Mat::zeros( 600,800, CV_8UC3);//CV_8UC3
+		int  imgSize = img.total()*img.elemSize();
+		uchar sockData[imgSize];
+
+	   for (int i = 0; i < imgSize; i += bytes) {
+		   if ((bytes = recv(connectSock, sockData +i, imgSize  - i, 0)) == -1) {
+			 cout<<"recv failed"<<endl;
+			   i--;
+			}
+	   }
+
+	   // Assign pixel value to img
+
+	   int ptr=0;
+	   for (int i = 0;  i < img.rows; i++) {
+	    for (int j = 0; j < img.cols; j++) {
+	     img.at<cv::Vec3b>(i,j) = cv::Vec3b(sockData[ptr+ 0],sockData[ptr+1],sockData[ptr+2]);
+	     ptr=ptr+3;
+	     }
+	    }
+	   namedWindow("D", WINDOW_AUTOSIZE );
+	   imshow( "Client", img);
+	 waitKey(30);
+
+
+	// Close the client connection using close
+    close(sockfd);
+    }
+
+
 
 //    Mat image;
 //    image = imread("4099", CV_LOAD_IMAGE_COLOR);
@@ -86,7 +133,7 @@ int main(int argc, char *argv[])
 
  //Repeat operation,to receive data, to covert socket data to picture
 //
-Mat  img = Mat::zeros( rfps[choix].res.resX,rfps[choix].res.resY, CV_8UC3);//CV_8UC3
+//////Mat  img = Mat::zeros( rfps[choix].res.resX,rfps[choix].res.resY, CV_8UC3);//CV_8UC3
 //   int  imgSize = img.total()*img.elemSize();
   // uchar sockData[imgSize];
 
@@ -110,11 +157,8 @@ Mat  img = Mat::zeros( rfps[choix].res.resX,rfps[choix].res.resY, CV_8UC3);//CV_
 //   ptr=ptr+3;
 //   }
 //  }
-//    n = write(sockfd,image.data,image.total()*image.channels());
-//    if (n < 0)
-//         error("ERROR writing to socket");
-//		Close the client connection using close
-  //  close(sockfd);
+
+
 
   //  namedWindow( "Client", CV_WINDOW_AUTOSIZE );// Create a window for display.
  //   imshow( "Client", image );
