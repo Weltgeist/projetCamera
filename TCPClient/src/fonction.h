@@ -2,8 +2,8 @@
 #define FONCTION_H
 //#include<cmath>
 //#include<cstring>
-#include<cstdio>
-#include<cstdlib>
+//#include<cstdio>
+//#include<cstdlib>
 //#include<math.h>
 //#include<iostream>
 //#include<fstream>
@@ -22,25 +22,33 @@
 //using namespace cv;
 //using namespace std;
 
-
-//int detectCamera();
-//void populerResolutions(ResolutionFPS* rfps);
-
 void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2]);
-//
-//int populerFPS(ResolutionFPS (&rfps)[13]);
-//
-//void capture5SEC(int choix);
-//int choixUser(ResolutionFPS (&rfps)[13]);
 
-//void enregistVideo(ResolutionFPS (&rfps)[13],int choix);
-
-//V.2.0 modulaire
-
-//void initCapture(VideoCapture &capture,ResolutionFPS &rfps);
-
-//void captureImage(VideoCapture &capture,Mat &frame);
+void error(const char *msg);
 
 
 #endif
 
+
+
+
+
+
+
+
+
+
+
+//int detectCamera();
+
+//int populerFPS(ResolutionFPS (&rfps)[13]);
+
+//void capture5SEC(int choix);
+
+//int choixUser(ResolutionFPS (&rfps)[13]);
+
+//void enregistVideo(ResolutionFPS (&rfps)[13],int choix);
+
+//void initCapture(VideoCapture &capture,ResolutionFPS &rfps);
+
+//void captureImage(VideoCapture &capture,Mat &frame);

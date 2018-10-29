@@ -1,7 +1,7 @@
 //#include<cmath>
 //#include<cstring>
-#include<cstdio>
-#include<cstdlib>
+//#include<cstdio>
+//#include<cstdlib>
 //#include<math.h>
 //#include<iostream>
 //#include<fstream>
@@ -23,15 +23,6 @@
 //using namespace cv;
 
 
-
-/**
-*\fn void initRFPS(ResolutionFPS* Obj ,int t_id)
-*\brief Pass a object vector line by line and assign initRes.
-*\param t_id
-*\param t_id:
-*\return void
-*/
-
 /**
  * void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2])
  * \brief Pass an object table by reference and assign resolutions X and Y to each instantiation .
@@ -48,6 +39,15 @@ void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2])
 	}
 
 }
+
+
+void error(const char *msg)
+{
+    perror(msg);
+    exit(0);
+}
+
+
 
 //int detectCamera()
 //{
@@ -68,9 +68,9 @@ void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2])
 //	  else{return 0;}
 //}
 
-//
+
 //int populerFPS(ResolutionFPS (&rfps)[13]){
-////	string nom_capture;
+//	//string nom_capture;
 //
 //for (int i = 0; i < 13; i++)
 //{
@@ -98,8 +98,8 @@ void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2])
 //		cout << "Failed to capture an image" << endl;
 //		return -1;
 //		}
-////	    	cvtColor(frame, edges, CV_BGR2GRAY);
-////	    	Canny(edges, edges, 0, 30, 3);
+// //	    	cvtColor(frame, edges, CV_BGR2GRAY);
+// //	    	Canny(edges, edges, 0, 30, 3);
 //	}
 //
 //	clock_gettime( CLOCK_REALTIME, &end );
@@ -108,9 +108,9 @@ void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2])
 //	cout << "Capturing and processing " << frames/difference << " frames per second for " << rfps[i].res.resX << "x" << rfps[i].res.resY << endl;
 //	rfps[i].fps = frames/difference;
 //
-////	    nom_capture = "capture"+itoa(i)+".png";
-////	    cin >> nom_capture;
-////		imwrite(nom_capture, frame);
+// //	    nom_capture = "capture"+itoa(i)+".png";
+// //	    cin >> nom_capture;
+// //		imwrite(nom_capture, frame);
 //	}
 //return 1;
 //}
@@ -133,6 +133,7 @@ void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2])
 //	return --choix;
 //}
 
+
 //void enregistVideo(ResolutionFPS (&rfps)[13],int choix){
 //
 //VideoWriter vidW("/home/root/capture-liv1.avi",CV_FOURCC('M','J','P','G'),round(rfps[choix].fps),Size(rfps[choix].res.resX,rfps[choix].res.resY),true);
@@ -154,109 +155,40 @@ void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2])
 //
 //}
 
+
 //void captureImage(VideoCapture &capture,Mat &frame)
 //{
 //	capture >> frame;
 //}
-//
+
+
 //void initCapture(VideoCapture &capture,ResolutionFPS &rfps) ///Besoin d'envoyer rfps[choix]
 //{
 //	capture.set(CV_CAP_PROP_FRAME_WIDTH,rfps.res.resX);
 //	capture.set(CV_CAP_PROP_FRAME_HEIGHT,rfps.res.resY);
 //}
 
+
+//void capture5SEC(int choix)
 //{
-////	string nom_capture;
+//		VideoCapture capture(0);
+//		capture.set(CV_CAP_PROP_FRAME_WIDTH,rfps[choix].res.resX);
+//		capture.set(CV_CAP_PROP_FRAME_HEIGHT,rfps[choix].res.resY);
+//		string nom_capture;
+//		Mat video;
 //
-////	for (int i = 0; i < 13; i++)
-////	{
-////
-////		VideoCapture capture(0);
-////		capture.set(CV_CAP_PROP_FRAME_WIDTH,rfps[i].res.resX);
-////		capture.set(CV_CAP_PROP_FRAME_HEIGHT,rfps[i].res.resY);
-////		if(!capture.isOpened()){
-////			cout << "Failed to connect to the camera." << endl;
-////		}
-////		Mat frame, edges;
-////
-////		struct timespec start, end;
-////		clock_gettime( CLOCK_REALTIME, &start );
-////
-////		int frames=2;
-////		for(int i=0; i<frames; i++){
-////			capture >> frame;
-////			if(frame.empty()){
-////			cout << "Failed to capture an image" << endl;
-////			return -1;
-////			}
-//////	    	cvtColor(frame, edges, CV_BGR2GRAY);
-//////	    	Canny(edges, edges, 0, 30, 3);
-////		}
-////
-////		clock_gettime( CLOCK_REALTIME, &end );
-////		double difference = (end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec)/1000000000.0d;
-////		cout << "It took " << difference << " seconds to process " << frames << " frames" << endl;
-////		cout << "Capturing and processing " << frames/difference << " frames per second " << endl;
-////		rfps[i].fps = frames/difference;
-////
-//////	    nom_capture = "capture"+itoa(i)+".png";
-//////	    cin >> nom_capture;
-//////		imwrite(nom_capture, frame);
-////		}
+//		for (int i = 0; i < 5*rfps[choix].fps; i++)
+//	{
+//						capture >> video;
+//	}
+//
+//		VideoWrite("capture-liv1.avi", video)
+//
 //}
-//
-////void capture5SEC(int choix)
-////{
-////		VideoCapture capture(0);
-////		capture.set(CV_CAP_PROP_FRAME_WIDTH,rfps[choix].res.resX);
-////		capture.set(CV_CAP_PROP_FRAME_HEIGHT,rfps[choix].res.resY);
-////		string nom_capture;
-////		Mat video;
-////
-////		for (int i = 0; i < 5*rfps[choix].fps; i++)
-////	{
-////						capture >> video;
-////	}
-////
-////		VideoWrite("capture-liv1.avi", video)
-////
-////}
-//
-//
-//
-//double boneCVtiming()
-//{
-////    VideoCapture capture(0);
-////    capture.set(CV_CAP_PROP_FRAME_WIDTH,640);
-////    capture.set(CV_CAP_PROP_FRAME_HEIGHT,480);
-////    if(!capture.isOpened()){
-////	    cout << "Failed to connect to the camera." << endl;
-////    }
-////    Mat frame, edges;
-////
-////    struct timespec start, end;
-////    clock_gettime( CLOCK_REALTIME, &start );
-////
-////    int frames=2;
-////    for(int i=0; i<frames; i++){
-////    	capture >> frame;
-////    	if(frame.empty()){
-////		cout << "Failed to capture an image" << endl;
-////		return -1;
-////    	}
-////    	cvtColor(frame, edges, CV_BGR2GRAY);
-////    	Canny(edges, edges, 0, 30, 3);
-////    }
-////
-////    clock_gettime( CLOCK_REALTIME, &end );
-////    double difference = (end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec)/1000000000.0d;
-////    cout << "It took " << difference << " seconds to process " << frames << " frames" << endl;
-////    cout << "Capturing and processing " << frames/difference << " frames per second " << endl;
-////
-////    imwrite("edges.png", edges);
-////    imwrite("capture.png", frame);
-////    return frames/difference;
-//}
+
+
+
+
 
 
 
