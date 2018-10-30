@@ -26,6 +26,8 @@ void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2]);
 
 void error(const char *msg);
 
+int choixUser(ResolutionFPS (&rfps)[13]);
+
 
 #endif
 

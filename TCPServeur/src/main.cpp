@@ -1,6 +1,7 @@
 //SERVEUR///
 
 /* boneCVtiming.cpp
+
  *
  * Copyright Derek Molloy, School of Electronic Engineering, Dublin City University
  * www.derekmolloy.ie
@@ -9,6 +10,9 @@
  * provided that source code redistributions retain this notice.
  *
  * This software is provided AS IS and it comes with no warranties of any type.
+ */
+/*
+ * Code taken from https://stackoverflow.com/questions/20314524/c-opencv-image-sending-through-socket
  */
 
 #include<iostream>
@@ -42,7 +46,7 @@ const int RES_TABLE[13][2]={{176,144},{160,120},{320,176},{320,240},{352,288},{4
 
 int main(int argc, char *argv[])
 {
-	int choix=7;
+	int choix;
 
 	// fn detecter bonne camera (trouver id 046d:0825 dans les devices usb)
 	if (detectCamera()==1){
@@ -57,7 +61,7 @@ int main(int argc, char *argv[])
 	 long int bytes;
 	 int clientSock;
 	 socklen_t clilen;
-	 char buffer[1024];
+	 char buffer[1024]={'0'};
 	 struct sockaddr_in serv_addr, cli_addr; // adress structure
 	 int n;
 
@@ -84,17 +88,20 @@ int main(int argc, char *argv[])
 	 clilen = sizeof(cli_addr);
 
 	 // Initialize the resolution of the image to be captured
-	 initCapture(capture,rfps[choix]);
+	 //initCapture(capture,rfps[choix]);
+
+	 cout<<"ready to Accept"<<endl;
+
+	 // Accept the client connection
+	 newsockfd = accept(sockfd,
+				 (struct sockaddr *) &cli_addr,
+				 &clilen);
+	 if (newsockfd < 0)
+		  error("ERROR on accept");
 
 	 //BOUCLE infinite until the client's QUIT
 	 while(1){
 
-		 // Accept the client connection
-		 newsockfd = accept(sockfd,
-					 (struct sockaddr *) &cli_addr,
-					 &clilen);
-		 if (newsockfd < 0)
-			  error("ERROR on accept");
 
 		// Lire le uint_32 envoye par le client
 		 bzero(buffer,1024);
@@ -103,7 +110,22 @@ int main(int argc, char *argv[])
 
 		 //Decoder le uint32 soit ici le OK/Quit
 		 uint32_t result = atoi(buffer);
+		 bool res = test(result,0);
+		 cout << res << endl;
+
+		 if (test(result,1)){
+			if (test(result,2)) choix = 11;
+			else choix = 7;
+		 }
+		else {
+			if (test(result,2)) choix = 4;
+			else choix = 1;
+		}
+
 		 if (test(result,0)){
+
+			 // Initialize the resolution of the image to be captured
+			 initCapture(capture,rfps[choix]);
 
 			 Mat frame;
 			 //capture
@@ -112,24 +134,28 @@ int main(int argc, char *argv[])
 			 frame = (frame.reshape(0,1));
 
 			 int  imgSize = frame.total()*frame.elemSize();
+			 cout<<sizeof(frame.data);
+			 cout<<imgSize<<endl;
 
+			 ////////////
 			 // Send data
-			 bytes = send(clientSock, frame.data, imgSize, 0);
+			 bytes = send(newsockfd, frame.data, imgSize, 0); //clientSock
+			 cout<<bytes<<endl;
 
 			 // Save the sent image
-			 Mat image(rfps[choix].res.resX,rfps[choix].res.resY,CV_8UC3,*buffer);
-			 imwrite("/home/root/IMG_NOW.png",image);
+			 //Mat image(rfps[choix].res.resY,rfps[choix].res.resX,CV_8UC3,frame.data);
+			 //imwrite("/home/root/IMG_NOW.png",image);
 
-			 // Show the sent image
-		     namedWindow( "Server", CV_WINDOW_AUTOSIZE );// Create a window for display.
-		     imshow( "Server", image );
+//			 // Show the sent image
+//		     namedWindow( "Server", CV_WINDOW_AUTOSIZE );// Create a window for display.
+//		     imshow( "Server", image );
 
 		 }
 		 else break;
-
+	 	}
 		 close(newsockfd);
 		 //FIN DE BOUCLE
-	 }
+
 
      //Close communication
      close(sockfd);
@@ -140,6 +166,7 @@ int main(int argc, char *argv[])
 	  {
 		 cout<<"Pas de ou pas la bonne camera.\n";
 	  }
+		cout<<"Logout Serveur"<<endl;
 
      return 0;
 }

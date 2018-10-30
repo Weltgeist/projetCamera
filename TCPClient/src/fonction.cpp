@@ -8,7 +8,8 @@
 //#include<string>
 #include<stdio.h>
 #include<stdlib.h>
-//#include<opencv2/opencv.hpp>
+#include<iostream>
+#include<opencv2/opencv.hpp>
 //#include <opencv2/core/core.hpp>
 //#include<opencv2/core.hpp>
 //#include<opencv2/imgproc.hpp>
@@ -19,7 +20,7 @@
 #include "fonction.h"
 
 
-//using namespace std;
+using namespace std;
 //using namespace cv;
 
 
@@ -47,6 +48,30 @@ void error(const char *msg)
     exit(0);
 }
 
+
+int choixUser(ResolutionFPS (&rfps)[13])
+{
+	int choix;
+	int table[4]={1,4,7,11};
+	char choixcar[1000];
+	cout << "Choisissez une resolution parmi les suivantes:\n";
+	for (int i = 0; i < 4; i++){
+		cout << i+1 << ": " << rfps[table[i]].res.resX << "x" << rfps[table[i]].res.resY << "\n";
+	}
+	cin >> choix;
+	//cin.get(choixcar);
+	//choix = atoi(choixcar);
+	while (!cin || choix < 1 || choix > 4) {
+		cout << "L'entree doit etre un nombre de 1 a 4, choisissez a nouveau.\n";
+		cin.clear();
+		//cin.ignore(INT_MAX, '\n');
+		cin >> choix;
+		//cin.get(choixcar);
+		//waitKey(30);
+		//choix = atoi(choixcar);
+	}
+	return --choix;
+}
 
 
 //int detectCamera()
@@ -116,22 +141,7 @@ void error(const char *msg)
 //}
 
 
-//int choixUser(ResolutionFPS (&rfps)[13])
-//{
-//	int choix;
-//	cout << "Choisissez une resolution parmi les suivantes:\n";
-//	for (int i = 0; i < 13; i++){
-//		cout << i+1 << ": " << rfps[i].res.resX << "x" << rfps[i].res.resY << "\n";
-//	}
-//	cin >> choix;
-//	while (!cin || choix < 1 || choix > 13) { //!isdigit(choix) ||
-//		cout << "L'entree doit etre un nombre de 1 a 13, choisissez a nouveau.\n";
-//		cin.clear();
-//		cin.ignore(INT_MAX, '\n');
-//		cin >> choix;
-//	}
-//	return --choix;
-//}
+
 
 
 //void enregistVideo(ResolutionFPS (&rfps)[13],int choix){
