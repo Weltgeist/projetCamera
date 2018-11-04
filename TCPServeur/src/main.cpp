@@ -131,20 +131,18 @@ int main(int argc, char *argv[])
 		}
 		// cout << result<< endl;
 		 //cout << choix<< endl;
-		/////////////////
 
 			 //Capture
 			captureImage(capture,frame);
 			//Resize
-			cv::resize(frame,*frame2,Size(rfps[choix].res.resX,rfps[choix].res.resY));
+			cv::resize(frame,*frame2,Size(rfps[choix].getRes().getX(),rfps[choix].getRes().getY()));
 			//set image size
 			 imgSize = frame2->total()*(frame2->elemSize());
 			 //cout<<imgSize<<"Serveur!!!"<<endl;
 
-		////////////
 			 //Send data
-			 bytes = send(newsockfd, frame2->data, imgSize, 0); //clientSock
-		//Clean
+			 bytes = send(newsockfd, frame2->data, imgSize, 0);
+			 //Clean
 			if(frame2!=0){delete frame2;}
 			frame2=0;
 		 }

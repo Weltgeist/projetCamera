@@ -76,7 +76,6 @@ int main(int argc, char *argv[])
     	// Connection to server socket
 		if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0)
 			error("ERROR connecting");
-		//choix = choixUser(rfps);
 
 		while(go){
 			// Send ok to server to send the image
@@ -85,7 +84,7 @@ int main(int argc, char *argv[])
 			if (n < 0){ error("ERROR writing to socket");}
 			// Initialize image for reception
 			img=new Mat;
-			*img= Mat::zeros( rfps[choix].res.resY,rfps[choix].res.resX, CV_8UC3); //600x800
+			*img= Mat::zeros( rfps[choix].getRes().getY() ,rfps[choix].getRes().getX() , CV_8UC3);
 			imgSize = img->total()*(img->elemSize());
 			//cout<<imgSize<<endl;
 			//uchar sockData[imgSize];
@@ -106,15 +105,7 @@ int main(int argc, char *argv[])
 		   if (key == 27) {break;}
 		   //Create New Message: Ok+RES
 		   if (key == 97){ choix0_3 = choixUser(rfps);	   choix = table[choix0_3];};
-//		   		   count++;
-//		   		   if(count>=100)
-//		   		   {
-//		   			   if(nn>=10000){nn=0;}
-//		   			   nn++;
-//		   			   choix=table[nn%4];
-//		   			   count=0;
-//
-//		   		   }
+
 			messages = (choix0_3<<1)+ELE4205_OK;
 			//cout<<messages<<endl;
 
@@ -132,7 +123,6 @@ int main(int argc, char *argv[])
 
 	   cout<<"Logout Client"<<endl;
 
-//	int choix = choixUser(rfps);
 
     return 0;
 }

@@ -46,8 +46,7 @@ void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2])
 
 	for (int i=0;i<13;i++)
 	{
-		(frps[i]).res.resX=table[i][0];
-	    (frps[i]).res.resY=table[i][1];
+		(frps[i]).setRes(table[i][0],table[i][1]);
 	}
 
 }
@@ -55,8 +54,8 @@ void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2])
 
 void initCapture(VideoCapture &capture,ResolutionFPS &rfps) ///Besoin d'envoyer rfps[choix]
 {
-	capture.set(CV_CAP_PROP_FRAME_WIDTH,rfps.res.resX);
-	capture.set(CV_CAP_PROP_FRAME_HEIGHT,rfps.res.resY);
+	capture.set(CV_CAP_PROP_FRAME_WIDTH,rfps.getRes().getX());
+	capture.set(CV_CAP_PROP_FRAME_HEIGHT,rfps.getRes().getY());
 }
 
 

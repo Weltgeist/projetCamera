@@ -36,8 +36,8 @@ void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2])
 
 	for (int i=0;i<13;i++)
 	{
-		(frps[i]).res.resX=table[i][0];
-	    (frps[i]).res.resY=table[i][1];
+		(frps[i]).setRes(table[i][0],table[i][1]);
+
 	}
 
 }
@@ -58,7 +58,7 @@ int choixUser(ResolutionFPS (&rfps)[13])
 	char* ptr;
 	cout << "Choisissez une resolution parmi les suivantes:\n";
 	for (int i = 0; i < 4; i++){
-		cout << i+1 << ": " << rfps[table[i]].res.resX << "x" << rfps[table[i]].res.resY << "\n";
+		cout << i+1 << ": " << rfps[table[i]].getRes().getX() << "x" << rfps[table[i]].getRes().getY()  << "\n";
 	}
 	cin >> choix;
 	 //choix = getchar()-48;
