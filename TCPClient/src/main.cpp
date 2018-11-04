@@ -36,7 +36,8 @@ int main(int argc, char *argv[])
 	int count=0;
 	bool go=1;
 	int choix=1;
-	int table[4]={1,3,9,1};
+	int choix0_3=0;
+	int table[4]={1,3,9,12};
 	int nn=0;
     int sockfd, portno, n;
     long int bytes;
@@ -45,6 +46,7 @@ int main(int argc, char *argv[])
     struct hostent *server;
     uint32_t messages = ELE4205_OK;
     char buffer[256];
+    char key;
 	vector<uchar> sockData;
 	Mat*  img;
 	int  imgSize;
@@ -85,12 +87,12 @@ int main(int argc, char *argv[])
 			img=new Mat;
 			*img= Mat::zeros( rfps[choix].res.resY,rfps[choix].res.resX, CV_8UC3); //600x800
 			imgSize = img->total()*(img->elemSize());
-			cout<<imgSize<<endl;
+			//cout<<imgSize<<endl;
 			//uchar sockData[imgSize];
 			sockData.clear();
 			sockData.resize(imgSize);////////////////////////SKIPS UCHAR ALL TOGETHER,BUT WE CAN ALSO USE A METHOD WITH UCHAR
 			//WAITS!!!!!!!!!!!30 MS
-			char key = (char) waitKey(60);
+			key =static_cast<char> (waitKey(30));  /*(char)*/
 			// Receive image & assign to pixel
 			 if ((bytes = recv(sockfd, img->data, imgSize, MSG_WAITALL)) == -1)
 				 {cout<<"recv failed"<<endl;return -1;}
@@ -101,20 +103,19 @@ int main(int argc, char *argv[])
 			if(img!=0){delete img;}
 			img=0;
 			//Test key
-		   if (key == 27) break;
+		   if (key == 27) {break;}
 		   //Create New Message: Ok+RES
-		   //if (key == 13){ choix = choixUser(rfps);};
-		   		   count++;
-		   		   if(count>=100)
-		   		   {
-		   			   if(nn>=10000){nn=0;}
-		   			   nn++;
-		   			   choix=table[nn%4];
-		   			   count=0;
-
-		   		   }
-
-			messages = (nn%4<<1)+ELE4205_OK;
+		   if (key == 97){ choix0_3 = choixUser(rfps);	   choix = table[choix0_3];};
+//		   		   count++;
+//		   		   if(count>=100)
+//		   		   {
+//		   			   if(nn>=10000){nn=0;}
+//		   			   nn++;
+//		   			   choix=table[nn%4];
+//		   			   count=0;
+//
+//		   		   }
+			messages = (choix0_3<<1)+ELE4205_OK;
 			//cout<<messages<<endl;
 
 		   	}

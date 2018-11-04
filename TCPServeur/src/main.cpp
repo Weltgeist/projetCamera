@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 			frame2=new Mat;
 		 ///////////////Met a jour size;
 		 if (test(result,1)){
-			if (test(result,2)) choix =1;//11
+			if (test(result,2)) choix =12;//11
 			else choix = 3;//01
 		 }
 		else {
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
 			cv::resize(frame,*frame2,Size(rfps[choix].res.resX,rfps[choix].res.resY));
 			//set image size
 			 imgSize = frame2->total()*(frame2->elemSize());
-			 cout<<imgSize<<"Serveur!!!"<<endl;
+			 //cout<<imgSize<<"Serveur!!!"<<endl;
 
 		////////////
 			 //Send data

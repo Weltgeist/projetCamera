@@ -15,6 +15,7 @@
 //#include<opencv2/imgproc.hpp>
 //#include<opencv2/videoio.hpp>
 //#include<time.h>
+#include<limits>
 #include "class.h"
 //#include "constante.h"
 #include "fonction.h"
@@ -52,23 +53,24 @@ void error(const char *msg)
 int choixUser(ResolutionFPS (&rfps)[13])
 {
 	int choix;
-	int table[4]={1,4,7,11};
+	int table[4]={1,3,9,12};
 	char choixcar[1000];
+	char* ptr;
 	cout << "Choisissez une resolution parmi les suivantes:\n";
 	for (int i = 0; i < 4; i++){
 		cout << i+1 << ": " << rfps[table[i]].res.resX << "x" << rfps[table[i]].res.resY << "\n";
 	}
 	cin >> choix;
-	//cin.get(choixcar);
-	//choix = atoi(choixcar);
-	while (!cin || choix < 1 || choix > 4) {
+	 //choix = getchar()-48;
+	 std::cin.ignore(std::numeric_limits<char>::max(),'\n');
+
+	while (choix < 1 || choix > 4) {
 		cout << "L'entree doit etre un nombre de 1 a 4, choisissez a nouveau.\n";
-		cin.clear();
+		//cin.clear();
 		//cin.ignore(INT_MAX, '\n');
+		//choix = getchar()-48;
 		cin >> choix;
-		//cin.get(choixcar);
-		//waitKey(30);
-		//choix = atoi(choixcar);
+		std::cin.ignore(std::numeric_limits<char>::max(),'\n');
 	}
 	return --choix;
 }
