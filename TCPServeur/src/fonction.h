@@ -28,6 +28,8 @@ void captureImage(VideoCapture &capture,Mat &frame);
 
 void error(const char *msg);
 
+uint32_t findState();
+
 
 #endif
 

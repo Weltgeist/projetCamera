@@ -81,7 +81,45 @@ void error(const char *msg)
 }
 
 
+uint32_t findState()
+{
+	  string tension;
+	  string bouton;
+	  static int boutonprec =1; // Pour qu'elle ne soit initialisee qu'une seule fois
+	  uint32_t etat;
 
+	ifstream myfile ("/sys/class/saradc/ch0");
+	  ifstream myfile2 ("/sys/class/gpio/gpio228/value");
+	  // Lire la lumiere
+	  if (myfile.is_open())
+	  {
+			getline (myfile,tension);
+			myfile.close();
+			cout << atoi(tension.c_str())<<endl;
+			if (atoi(tension.c_str()) > 800){
+				etat = 0; // lumiere 0
+			}
+			else {
+				// Lire le bouton
+				if (myfile2.is_open())
+					  {
+						getline (myfile2,bouton);
+						myfile2.close();
+						cout << atoi(bouton.c_str())<<endl;
+
+						if (atoi(bouton.c_str()) == 1 && boutonprec == 0){
+							etat = 3; // lumiere 1 et bouton relache
+						}
+						else etat = 1; // lumiere 1 et pas de bouton
+						boutonprec=atoi(bouton.c_str());
+				}
+				else cout << "Unable to open file"<< endl;
+			}
+	  }
+	  else cout << "Unable to open file"<< endl;
+	  cout << etat << endl;
+	  return etat;
+}
 
 
 
