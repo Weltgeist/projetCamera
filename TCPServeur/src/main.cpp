@@ -15,6 +15,7 @@
  */
 /*
  * Code taken from https://stackoverflow.com/questions/20314524/c-opencv-image-sending-through-socket
+ * 				and http://www.cplusplus.com/doc/tutorial/files/
  */
 
 #include<iostream>
@@ -42,124 +43,189 @@ using namespace cv;
 using namespace std;
 
 const string CAM_ID="046d:0825";
+const string ADC_LUM="/sys/class/saradc";
+const string GPIO228_PB="/sys/class/gpio/gpio228/value";
+
 const int NB_RES=13;
 const int RES_TABLE[13][2]={{176,144},{160,120},{320,176},{320,240},{352,288},{432,240},{800,600},{864,480},{960,544},{960,720},{1184,656},{1280,720},{1280,960}};
 
 
 int main(int argc, char *argv[])
 {
-	int choix;
+	uint32_t etat;
+	// Determiner l'etat (ready/down/button)
+		 // Lire la lumiere
+		  string tension;
+		  ifstream myfile ("/sys/class/saradc/ch0");
+		  ifstream myfile2 ("/sys/class/gpio/gpio228/value");
+		  string bouton;
+		  int boutonprec;
+		  ::string temp;
+		  char*ptrB;
 
-	// fn detecter bonne camera (trouver id 046d:0825 dans les devices usb)
-	if (detectCamera()==1){
+		  while(1){
+		  if (myfile.is_open())
+		  {
+			getline (myfile,tension);
+			myfile.close();
+			cout << atoi(tension.c_str())<<endl;
+			if (atoi(tension.c_str()) < 500){
+				etat = 0; // lumiere 0
+			}
+			else {
+				// tester bouton
+				if (myfile2.is_open())
+					  {
+						getline (myfile2,bouton);
+						myfile2.close();
+						cout << atoi(bouton.c_str())<<endl;
 
-	// fn populer les resolutions
-	ResolutionFPS rfps[13];
-	populerResolutions(rfps,RES_TABLE);
+						if (atoi(bouton.c_str()) == 1 && boutonprec == 0){
+							etat = 3; // lumiere 1 et bouton relache
+							boutonprec=atoi(bouton.c_str());
+						}
+						else etat = 1; // lumiere 1 et pas de bouton
+				}
+				else cout << "Unable to open file"<< endl;
+			}
 
-	// Initialisations
-	 VideoCapture capture(0);
-	 int sockfd, newsockfd, portno;
-	 long int bytes;
-	 int clientSock;
-	 socklen_t clilen;
-	 char buffer[1024]={'0'};
-	 char *ptrBuffer;
-	 struct sockaddr_in serv_addr, cli_addr; // adress structure
-	 int n;
-	 Mat frame;
-	 Mat*frame2;
-	 int imgSize;
+		  }
+		  else cout << "Unable to open file"<< endl;
+		  waitKey(30);
+		  }
 
-	 //Create a socket()
-	 sockfd = socket(AF_INET, SOCK_STREAM, 0); //AFINET  == communication domain Ipv4, SOCK_STREAM is communication type(TCP in our case), 0 is  value for internet protocole
-	 if (sockfd < 0)
-		error("ERROR opening socket");
-
-	 //Construct a local address structure
-	 bzero((char *) &serv_addr, (uint)sizeof(serv_addr));
-	 portno = PORT;//DEFINE PORT 4099 to be used as default instead of arg[v]//atoi(argv[1]);
-	 serv_addr.sin_family = AF_INET;
-	 serv_addr.sin_addr.s_addr = INADDR_ANY;
-	 serv_addr.sin_port = htons(portno);
-
-	 //Assign a port to the number with bind() /Bind the local address
-	 if (bind(sockfd, (struct sockaddr *) &serv_addr,
-			 (uint)sizeof(serv_addr)) < 0)
-			  error("ERROR on binding");
-
-	 //Tell the system to allow connection made to that port with listen/ Mark the socket so it will listen for incoming connect
-	 listen(sockfd,5); //put the socket in passive mode and set 5 as the maximum number for queue
-
-	 clilen = sizeof(cli_addr);
-
-	 // Initialize the resolution of the image to be captured
-	 initCapture(capture,rfps[3]);
-
-	 cout<<"ready to Accept"<<endl;
-
-	 // Accept the client connection
-	 newsockfd = accept(sockfd,
-				 (struct sockaddr *) &cli_addr,
-				 &clilen);
-	 if (newsockfd < 0)
-		  error("ERROR on accept");
-
-	 //BOUCLE infinite until the client's QUIT
-	 while(1){
-
-
-		// Lire le uint_32 envoye par le client
-		 bzero(buffer,1024);
-		 n = read(newsockfd,buffer,1023);
-
-		 if (n < 0) error("ERROR reading from socket");
-
-		 //Decoder le uint32 soit ici le OK/Quit
-		 uint32_t result = strtol(buffer,&ptrBuffer,10);
-		 if (test(result,0)){ //Test Ok
-		 //create
-			frame2=new Mat;
-		 ///////////////Met a jour size;
-		 if (test(result,1)){
-			if (test(result,2)) choix =12;//11
-			else choix = 3;//01
-		 }
-		else {
-			if (test(result,2)) choix = 9;//10
-			else choix = 1;//00
-		}
-		// cout << result<< endl;
-		 //cout << choix<< endl;
-
-			 //Capture
-			captureImage(capture,frame);
-			//Resize
-			cv::resize(frame,*frame2,Size(rfps[choix].getRes().getX(),rfps[choix].getRes().getY()));
-			//set image size
-			 imgSize = frame2->total()*(frame2->elemSize());
-			 //cout<<imgSize<<"Serveur!!!"<<endl;
-
-			 //Send data
-			 bytes = send(newsockfd, frame2->data, imgSize, 0);
-			 //Clean
-			if(frame2!=0){delete frame2;}
-			frame2=0;
-		 }
-		 else break;
-	 	}
-		 close(newsockfd);
-		 //FIN DE BOUCLE
-     //Close communication
-     close(sockfd);
-
-     }
-
-	  else
-	  {
-		 cout<<"Pas de ou pas la bonne camera.\n";
-	  }
-		cout<<"Logout Serveur"<<endl;
+//	int choix;
+//
+//	// fn detecter bonne camera (trouver id 046d:0825 dans les devices usb)
+//	if (detectCamera()==1){
+//
+//	// fn populer les resolutions
+//	ResolutionFPS rfps[13];
+//	populerResolutions(rfps,RES_TABLE);
+//
+//	// Initialisations
+//	 VideoCapture capture(0);
+//	 int sockfd, newsockfd, portno;
+//	 long int bytes;
+//	 int clientSock;
+//	 socklen_t clilen;
+//	 char buffer[1024]={'0'};
+//	 char *ptrBuffer;
+//	 struct sockaddr_in serv_addr, cli_addr; // adress structure
+//	 int n;
+//	 Mat frame;
+//	 Mat*frame2;
+//	 int imgSize;
+//	 uint32_t etat;
+//
+//	 //Create a socket()
+//	 sockfd = socket(AF_INET, SOCK_STREAM, 0); //AFINET  == communication domain Ipv4, SOCK_STREAM is communication type(TCP in our case), 0 is  value for internet protocole
+//	 if (sockfd < 0)
+//		error("ERROR opening socket");
+//
+//	 //Construct a local address structure
+//	 bzero((char *) &serv_addr, (uint)sizeof(serv_addr));
+//	 portno = PORT;//DEFINE PORT 4099 to be used as default instead of arg[v]//atoi(argv[1]);
+//	 serv_addr.sin_family = AF_INET;
+//	 serv_addr.sin_addr.s_addr = INADDR_ANY;
+//	 serv_addr.sin_port = htons(portno);
+//
+//	 //Assign a port to the number with bind() /Bind the local address
+//	 if (bind(sockfd, (struct sockaddr *) &serv_addr,
+//			 (uint)sizeof(serv_addr)) < 0)
+//			  error("ERROR on binding");
+//
+//	 //Tell the system to allow connection made to that port with listen/ Mark the socket so it will listen for incoming connect
+//	 listen(sockfd,5); //put the socket in passive mode and set 5 as the maximum number for queue
+//
+//	 clilen = sizeof(cli_addr);
+//
+//	 // Initialize the resolution of the image to be captured
+//	 initCapture(capture,rfps[3]);
+//
+//	 cout<<"ready to Accept"<<endl;
+//
+//	 // Accept the client connection
+//	 newsockfd = accept(sockfd,
+//				 (struct sockaddr *) &cli_addr,
+//				 &clilen);
+//	 if (newsockfd < 0)
+//		  error("ERROR on accept");
+//
+//	 //BOUCLE infinite until the client's QUIT
+//	 while(1){
+//
+//		 // Determiner l'etat (ready/down/button)
+//			 // Lire la lumiere
+//			  string tension;
+//			  ifstream myfile ("/sys/class/saradc");
+//			  if (myfile.is_open())
+//			  {
+//				getline (myfile,tension);
+//				myfile.close();
+//			  }
+//			  else cout << "Unable to open file";
+//			 // Lire le bouton
+//
+//		 // Envoyer l'etat
+//
+//		 // Si l'etat est 0
+//		 	 // reboucler a determiner l'etat
+//		 	 // aurait besoin de savoir si il y a un escape
+//
+//		 // Si l'etat est 1 ou 3
+//
+//		// Lire le uint_32 envoye par le client
+//		 bzero(buffer,1024);
+//		 n = read(newsockfd,buffer,1023);
+//
+//		 if (n < 0) error("ERROR reading from socket");
+//
+//		 //Decoder le uint32 soit ici le OK/Quit
+//		 uint32_t result = strtol(buffer,&ptrBuffer,10);
+//		 if (test(result,0)){ //Test Ok
+//		 //create
+//			frame2=new Mat;
+//		 ///////////////Met a jour size;
+//		 if (test(result,1)){
+//			if (test(result,2)) choix =12;//11
+//			else choix = 3;//01
+//		 }
+//		else {
+//			if (test(result,2)) choix = 9;//10
+//			else choix = 1;//00
+//		}
+//		// cout << result<< endl;
+//		 //cout << choix<< endl;
+//
+//			 //Capture
+//			captureImage(capture,frame);
+//			//Resize
+//			cv::resize(frame,*frame2,Size(rfps[choix].getRes().getX(),rfps[choix].getRes().getY()));
+//			//set image size
+//			 imgSize = frame2->total()*(frame2->elemSize());
+//			 //cout<<imgSize<<"Serveur!!!"<<endl;
+//
+//			 //Send data
+//			 bytes = send(newsockfd, frame2->data, imgSize, 0);
+//			 //Clean
+//			if(frame2!=0){delete frame2;}
+//			frame2=0;
+//		 }
+//		 else break;
+//	 	}
+//		 close(newsockfd);
+//		 //FIN DE BOUCLE
+//     //Close communication
+//     close(sockfd);
+//
+//     }
+//
+//	  else
+//	  {
+//		 cout<<"Pas de ou pas la bonne camera.\n";
+//	  }
+//		cout<<"Logout Serveur"<<endl;
 
      return 0;
 }

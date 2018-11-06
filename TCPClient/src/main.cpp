@@ -16,6 +16,8 @@
 #include <vector>
 #include <opencv2/opencv.hpp>
 #include <iostream>
+#include <sys/types.h>
+#include <signal.h>
 #include"class.h"
 //#include "constante.h"
 #include "fonction.h"
@@ -32,99 +34,121 @@ const int RES_TABLE[13][2]={{176,144},{160,120},{320,176},{320,240},{352,288},{4
 
 int main(int argc, char *argv[])
 {
-	// Initialisations
-	int count=0;
-	bool go=1;
-	int choix=1;
-	int choix0_3=0;
-	int table[4]={1,3,9,12};
-	int nn=0;
-    int sockfd, portno, n;
-    long int bytes;
-    int connectSock;
-    struct sockaddr_in serv_addr;
-    struct hostent *server;
-    uint32_t messages = ELE4205_OK;
-    char buffer[256];
-    char key;
-	vector<uchar> sockData;
-	Mat*  img;
-	int  imgSize;
-    portno = PORT;
+	pid_t pid = fork();
 
-	// Populer les resolutions
-	ResolutionFPS rfps[13];
-	populerResolutions(rfps,RES_TABLE);
+		if(pid == 0)
+		{
+			cout<<"Child"<<pid<<endl;
 
-    // Create TCP socket using socket
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0)
-        error("ERROR opening socket");
-    server = gethostbyname("192.168.7.2");
-    if (server == NULL) {
-        fprintf(stderr,"ERROR, no such host\n");
-        exit(0);
-    }
-    bzero((char *) &serv_addr, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    bcopy((char *)server->h_addr,
-         (char *)&serv_addr.sin_addr.s_addr,
-         server->h_length);
-    serv_addr.sin_port = htons(portno);
+		}
+		else if (pid>0)
+		{
+
+			cout<<"Parent"<<pid<<endl;
+		}
+		else
+		{
+			cout << "PID failed" << endl;
+		}
+	//}
+
+		return 0;
 
 
-    	// Connection to server socket
-		if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0)
-			error("ERROR connecting");
 
-		while(go){
-			// Send ok to server to send the image
-			sprintf(buffer,"%u", messages);
-			n = write(sockfd,buffer,sizeof(messages));
-			if (n < 0){ error("ERROR writing to socket");}
-			// Initialize image for reception
-			img=new Mat;
-			*img= Mat::zeros( rfps[choix].getRes().getY() ,rfps[choix].getRes().getX() , CV_8UC3);
-			imgSize = img->total()*(img->elemSize());
-			//cout<<imgSize<<endl;
-			//uchar sockData[imgSize];
-			sockData.clear();
-			sockData.resize(imgSize);////////////////////////SKIPS UCHAR ALL TOGETHER,BUT WE CAN ALSO USE A METHOD WITH UCHAR
-			//WAITS!!!!!!!!!!!30 MS
-			key =static_cast<char> (waitKey(30));  /*(char)*/
-			// Receive image & assign to pixel
-			 if ((bytes = recv(sockfd, img->data, imgSize, MSG_WAITALL)) == -1)
-				 {cout<<"recv failed"<<endl;return -1;}
-		   // Show image
-		   namedWindow("Client", WINDOW_AUTOSIZE );
-		   imshow( "Client", *img);
-		   //Prepare next set;
-			if(img!=0){delete img;}
-			img=0;
-			//Test key
-		   if (key == 27) {break;}
-		   //Create New Message: Ok+RES
-		   if (key == 97){ choix0_3 = choixUser(rfps);	   choix = table[choix0_3];};
+//	// Initialisations
+//	int count=0;
+//	bool go=1;
+//	int choix=1;
+//	int choix0_3=0;
+//	int table[4]={1,3,9,12};
+//	int nn=0;
+//    int sockfd, portno, n;
+//    long int bytes;
+//    int connectSock;
+//    struct sockaddr_in serv_addr;
+//    struct hostent *server;
+//    uint32_t messages = ELE4205_OK;
+//    char buffer[256];
+//    char key;
+//	vector<uchar> sockData;
+//	Mat*  img;
+//	int  imgSize;
+//    portno = PORT;
+//
+//	// Populer les resolutions
+//	ResolutionFPS rfps[13];
+//	populerResolutions(rfps,RES_TABLE);
+//
+//    // Create TCP socket using socket
+//    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+//    if (sockfd < 0)
+//        error("ERROR opening socket");
+//    server = gethostbyname("192.168.7.2");
+//    if (server == NULL) {
+//        fprintf(stderr,"ERROR, no such host\n");
+//        exit(0);
+//    }
+//    bzero((char *) &serv_addr, sizeof(serv_addr));
+//    serv_addr.sin_family = AF_INET;
+//    bcopy((char *)server->h_addr,
+//         (char *)&serv_addr.sin_addr.s_addr,
+//         server->h_length);
+//    serv_addr.sin_port = htons(portno);
+//
+//
+//    	// Connection to server socket
+//		if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0)
+//			error("ERROR connecting");
+//
+//		while(go){
+//			// Send ok to server to send the image
+//			sprintf(buffer,"%u", messages);
+//			n = write(sockfd,buffer,sizeof(messages));
+//			if (n < 0){ error("ERROR writing to socket");}
+//			// Initialize image for reception
+//			img=new Mat;
+//			*img= Mat::zeros( rfps[choix].getRes().getY() ,rfps[choix].getRes().getX() , CV_8UC3);
+//			imgSize = img->total()*(img->elemSize());
+//			//cout<<imgSize<<endl;
+//			//uchar sockData[imgSize];
+//			sockData.clear();
+//			sockData.resize(imgSize);////////////////////////SKIPS UCHAR ALL TOGETHER,BUT WE CAN ALSO USE A METHOD WITH UCHAR
+//			//WAITS!!!!!!!!!!!30 MS
+//			key =static_cast<char> (waitKey(30));  /*(char)*/
+//			// Receive image & assign to pixel
+//			 if ((bytes = recv(sockfd, img->data, imgSize, MSG_WAITALL)) == -1)
+//				 {cout<<"recv failed"<<endl;return -1;}
+//		   // Show image
+//		   namedWindow("Client", WINDOW_AUTOSIZE );
+//		   imshow( "Client", *img);
+//		   //Prepare next set;
+//			if(img!=0){delete img;}
+//			img=0;
+//			//Test key
+//		   if (key == 27) {break;}
+//		   //Create New Message: Ok+RES
+//		   if (key == 97){ choix0_3 = choixUser(rfps);	   choix = table[choix0_3];};
+//
+//			messages = (choix0_3<<1)+ELE4205_OK;
+//			//cout<<messages<<endl;
+//
+//		   	}
+//
+//
+//		//Create New Message: Not Ok
+//	   messages = 0;
+//	   sprintf(buffer,"%u", messages);
+//	   n = write(sockfd,buffer,sizeof(messages));
+//	   if (n < 0)
+//	   		error("ERROR writing to socket");
+//	   // Close the client connection using close
+//	   close(sockfd);
+//
+//	   cout<<"Logout Client"<<endl;
 
-			messages = (choix0_3<<1)+ELE4205_OK;
-			//cout<<messages<<endl;
-
-		   	}
 
 
-		//Create New Message: Not Ok
-	   messages = 0;
-	   sprintf(buffer,"%u", messages);
-	   n = write(sockfd,buffer,sizeof(messages));
-	   if (n < 0)
-	   		error("ERROR writing to socket");
-	   // Close the client connection using close
-	   close(sockfd);
-
-	   cout<<"Logout Client"<<endl;
-
-
-    return 0;
 }
 
 
