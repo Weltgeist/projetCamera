@@ -54,6 +54,8 @@ int main(int argc, char *argv[])
 	Mat*  img;
 	int  imgSize;
 	pid_t pid ;
+	int ctr_img = 0;
+	char sctr_img[50];
     portno = PORT;
 
 	// Populer les resolutions
@@ -112,29 +114,42 @@ int main(int argc, char *argv[])
 				 if ((bytes = recv(sockfd, img->data, imgSize, MSG_WAITALL)) == -1)
 					 {cout<<"recv failed"<<endl;return -1;}
 
-				pid = fork();
-				if(pid == 0)
-				{
-					if (state == 3){
-					imwrite("/export/tmp/4205_07/projet/Client.png", *img);
-					//cout<<"Child"<<pid<<endl; //utile pour debug
+
+				 if (state == 3){
+					 ctr_img++;
+					pid = fork();
+					if(pid == 0)
+					{
+
+						sprintf(sctr_img,"/export/tmp/4205_07/projet/Client%u.png",ctr_img);
+						imwrite(sctr_img, *img);
+						//cout<<"Child"<<pid<<endl; //utile pour debug
+
+
+						return 0;
+
 					}
-					return 0;
+					else if (pid>0)
+					{
 
-				}
-				else if (pid>0)
-				{
 
-				   // Show image
-				   namedWindow("Client", WINDOW_AUTOSIZE );
-				   imshow( "Client", *img);
-					//cout<<"Parent"<<pid<<endl; //utile pour debug
+					   // Show image
+					   namedWindow("Client", WINDOW_AUTOSIZE );
+					   imshow( "Client", *img);
+						//cout<<"Parent"<<pid<<endl; //utile pour debug
 				}
 				else
 				{
 					cout << "PID failed" << endl;
 				}
+				 }
 
+				 else {
+					 // Show image
+				   namedWindow("Client", WINDOW_AUTOSIZE );
+				   imshow( "Client", *img);
+					//cout<<"Parent"<<pid<<endl; //utile pour debug
+				 }
 			   //Prepare next set;
 				if(img!=0){delete img;}
 				img=0;
@@ -164,6 +179,7 @@ int main(int argc, char *argv[])
 		error("ERROR writing to socket");
    // Close the client connection using close
    close(sockfd);
+
 
    cout<<"Logout Client"<<endl;
 
