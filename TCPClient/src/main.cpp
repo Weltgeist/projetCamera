@@ -34,25 +34,6 @@ const int RES_TABLE[13][2]={{176,144},{160,120},{320,176},{320,240},{352,288},{4
 
 int main(int argc, char *argv[])
 {
-//		pid_t pid = fork();
-//		if(pid == 0)
-//		{
-//			cout<<"Child"<<pid<<endl;
-//
-//		}
-//		else if (pid>0)
-//		{
-//
-//			cout<<"Parent"<<pid<<endl;
-//		}
-//		else
-//		{
-//			cout << "PID failed" << endl;
-//		}
-//		return 0;
-
-
-
 	// Initialisations
 	int count=0;
 	bool go=1;
@@ -72,6 +53,7 @@ int main(int argc, char *argv[])
 	vector<uchar> sockData;
 	Mat*  img;
 	int  imgSize;
+	pid_t pid ;
     portno = PORT;
 
 	// Populer les resolutions
@@ -126,16 +108,40 @@ int main(int argc, char *argv[])
 		key =static_cast<char> (waitKey(30));  /*(char)*/
 
 			if (state == 1 || state == 3) { // Tant qu'il y a de la lumiere
-
 				// Receive image & assign to pixel
 				 if ((bytes = recv(sockfd, img->data, imgSize, MSG_WAITALL)) == -1)
 					 {cout<<"recv failed"<<endl;return -1;}
-			   // Show image
-			   namedWindow("Client", WINDOW_AUTOSIZE );
-			   imshow( "Client", *img);
+
+				pid = fork();
+				if(pid == 0)
+				{
+					if (state == 3){
+					imwrite("/export/tmp/4205_07/projet/Client.png", *img);
+					//cout<<"Child"<<pid<<endl; //utile pour debug
+					}
+					return 0;
+
+				}
+				else if (pid>0)
+				{
+
+				   // Show image
+				   namedWindow("Client", WINDOW_AUTOSIZE );
+				   imshow( "Client", *img);
+					//cout<<"Parent"<<pid<<endl; //utile pour debug
+				}
+				else
+				{
+					cout << "PID failed" << endl;
+				}
+
 			   //Prepare next set;
 				if(img!=0){delete img;}
 				img=0;
+
+
+
+
 			}
 
 			//Test key

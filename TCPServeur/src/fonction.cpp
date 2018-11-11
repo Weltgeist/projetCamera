@@ -98,7 +98,7 @@ uint32_t findState()
 	  {
 			getline (myfile,tension);
 			myfile.close();
-			cout << atoi(tension.c_str())<<endl;
+			//cout << atoi(tension.c_str())<<endl;
 			cout << strtol(tension.c_str(),&ptrB,10)<<endl;
 //			if (atoi(tension.c_str()) == -1){
 //
@@ -115,7 +115,7 @@ uint32_t findState()
 					  {
 						getline (myfile2,bouton);
 						myfile2.close();
-						cout << atoi(bouton.c_str())<<endl;
+						//cout << atoi(bouton.c_str())<<endl;
 						cout <<strtol(bouton.c_str(),&ptrC,10)<<endl;
 						//if (atoi(bouton.c_str()) == 1 && boutonprec == 0){
 						if (strtol(bouton.c_str(),&ptrC,10) == 1 && boutonprec == 0){
