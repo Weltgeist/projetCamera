@@ -108,31 +108,36 @@ int main(int argc, char *argv[])
 		 //Decoder le uint32 soit ici l'etat du serveur
 		 uint32_t state = strtol(buffer,&ptrBuffer,10);
 
-		 if (state == 1 || state == 3) {
+		 // Send ok to server to send the image
+		sprintf(buffer,"%u", messages);
+		n = write(sockfd,buffer,sizeof(messages));
+		if (n < 0){ error("ERROR writing to socket");}
 
-			// Send ok to server to send the image
-			sprintf(buffer,"%u", messages);
-			n = write(sockfd,buffer,sizeof(messages));
-			if (n < 0){ error("ERROR writing to socket");}
-			// Initialize image for reception
-			img=new Mat;
-			*img= Mat::zeros( rfps[choix].getRes().getY() ,rfps[choix].getRes().getX() , CV_8UC3);
-			imgSize = img->total()*(img->elemSize());
-			//cout<<imgSize<<endl;
-			//uchar sockData[imgSize];
-			sockData.clear();
-			sockData.resize(imgSize);////////////////////////SKIPS UCHAR ALL TOGETHER,BUT WE CAN ALSO USE A METHOD WITH UCHAR
-			//WAITS!!!!!!!!!!!30 MS
-			key =static_cast<char> (waitKey(30));  /*(char)*/
-			// Receive image & assign to pixel
-			 if ((bytes = recv(sockfd, img->data, imgSize, MSG_WAITALL)) == -1)
-				 {cout<<"recv failed"<<endl;return -1;}
-		   // Show image
-		   namedWindow("Client", WINDOW_AUTOSIZE );
-		   imshow( "Client", *img);
-		   //Prepare next set;
-			if(img!=0){delete img;}
-			img=0;
+
+		// Initialize image for reception
+		img=new Mat;
+		*img= Mat::zeros( rfps[choix].getRes().getY() ,rfps[choix].getRes().getX() , CV_8UC3);
+		imgSize = img->total()*(img->elemSize());
+		//cout<<imgSize<<endl;
+		//uchar sockData[imgSize];
+		sockData.clear();
+		sockData.resize(imgSize);////////////////////////SKIPS UCHAR ALL TOGETHER,BUT WE CAN ALSO USE A METHOD WITH UCHAR
+		//WAITS!!!!!!!!!!!30 MS
+		key =static_cast<char> (waitKey(30));  /*(char)*/
+
+			if (state == 1 || state == 3) { // Tant qu'il y a de la lumiere
+
+				// Receive image & assign to pixel
+				 if ((bytes = recv(sockfd, img->data, imgSize, MSG_WAITALL)) == -1)
+					 {cout<<"recv failed"<<endl;return -1;}
+			   // Show image
+			   namedWindow("Client", WINDOW_AUTOSIZE );
+			   imshow( "Client", *img);
+			   //Prepare next set;
+				if(img!=0){delete img;}
+				img=0;
+			}
+
 			//Test key
 		   if (key == 27) {break;}
 		   //Create New Message: Ok+RES
@@ -142,9 +147,6 @@ int main(int argc, char *argv[])
 		   }
 			messages = (choix0_3<<1)+ELE4205_OK;
 			//cout<<messages<<endl;
-
-	}
-
 		}
 
 

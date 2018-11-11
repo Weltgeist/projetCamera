@@ -115,6 +115,7 @@ int main(int argc, char *argv[])
 
 		  // Determiner l'etat (ready/down/button)
 		 etat = findState();
+		 //waitKey(5);
 
 		 // Envoyer l'etat au client
 		  bzero(buffer,1024);
@@ -126,13 +127,10 @@ int main(int argc, char *argv[])
 		 //// reboucler a determiner l'etat
 		 //// aurait besoin de savoir si il y a un escape
 
-		  if (etat == 1 || etat == 3) {
-
-			// Lire le uint_32 envoye par le client
+		  // Lire le uint_32 envoye par le client
 			 bzero(buffer,1024);
 			 n = read(newsockfd,buffer,1023);
 			 if (n < 0) error("ERROR reading from socket");
-
 			 //Decoder le uint32 soit ici le OK/Quit
 			 uint32_t result = strtol(buffer,&ptrBuffer,10);
 			 if (test(result,0)){ //Test Ok
@@ -150,6 +148,11 @@ int main(int argc, char *argv[])
 				// cout << result<< endl;
 				//cout << choix<< endl;
 
+		  if (etat == 1 || etat == 3) {
+
+
+
+
 				//Capture
 				captureImage(capture,frame);
 				//Resize
@@ -164,9 +167,10 @@ int main(int argc, char *argv[])
 				if(frame2!=0){delete frame2;}
 					frame2=0;
 			 }
-			 else break;
+
 
 		}
+		else break;
 
 	 	}//FIN DE BOUCLE
 		close(newsockfd);
