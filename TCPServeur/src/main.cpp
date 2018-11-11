@@ -61,6 +61,7 @@ int main(int argc, char *argv[])
 
 	// Initialisations
 	 int choix;
+	 int choixprec=0;
 	 VideoCapture capture(0);
 	 int sockfd, newsockfd, portno;
 	 long int bytes;
@@ -71,7 +72,8 @@ int main(int argc, char *argv[])
 	 struct sockaddr_in serv_addr, cli_addr; // adress structure
 	 int n;
 	 Mat frame;
-	 Mat*frame2;
+	 Mat frame2;
+	 //Mat*frame2;
 	 int imgSize;
 	 uint32_t etat;
 
@@ -135,15 +137,31 @@ int main(int argc, char *argv[])
 			 uint32_t result = strtol(buffer,&ptrBuffer,10);
 			 if (test(result,0)){ //Test Ok
 				 //create
-				frame2=new Mat;
+				//frame2=new Mat;
 				 ///////////////Met a jour size;
 				if (test(result,1)){
 					if (test(result,2)) choix =12;//11
 					else choix = 3;//01
+					if(choix!=choixprec){
+							// Initialize the resolution of the image to be captured
+							 initCapture(capture,rfps[choix]);
+							 Mat frame;
+							// Mat frame2;
+							 choixprec=choix;
+
+					}
 				 }
 				else {
 					if (test(result,2)) choix = 9;//10
 					else choix = 1;//00
+					if(choix!=choixprec){
+							// Initialize the resolution of the image to be captured
+							 initCapture(capture,rfps[choix]);
+							 Mat frame;
+							 //Mat frame2;
+							 choixprec=choix;
+
+					}
 				}
 				// cout << result<< endl;
 				//cout << choix<< endl;
@@ -156,16 +174,18 @@ int main(int argc, char *argv[])
 				//Capture
 				captureImage(capture,frame);
 				//Resize
-				cv::resize(frame,*frame2,Size(rfps[choix].getRes().getX(),rfps[choix].getRes().getY()));
+				//cv::resize(frame,*frame2,Size(rfps[choix].getRes().getX(),rfps[choix].getRes().getY()));
 				//set image size
-				imgSize = frame2->total()*(frame2->elemSize());
+				//imgSize = frame2->total()*(frame2->elemSize());
+				imgSize = frame.total()*(frame.elemSize());
 				//cout<<imgSize<<"Serveur!!!"<<endl;
 
 				//Send data
-				bytes = send(newsockfd, frame2->data, imgSize, 0);
+				//bytes = send(newsockfd, frame2->data, imgSize, 0);
+				bytes = send(newsockfd, frame.data, imgSize, 0);
 				//Clean
-				if(frame2!=0){delete frame2;}
-					frame2=0;
+//				if(frame2!=0){delete frame2;}
+//					frame2=0;
 			 }
 
 
