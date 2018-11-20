@@ -74,11 +74,11 @@ void captureImage(VideoCapture &capture,Mat &frame)
 }
 
 
-void error(const char *msg)
-{
-    perror(msg);
-    exit(1);
-}
+//void error(const char *msg)
+//{
+//    perror(msg);
+//    exit(1);
+//}
 
 
 uint32_t findState()

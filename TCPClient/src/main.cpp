@@ -13,11 +13,14 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#include <vector>
+//#include <vector>
 #include <opencv2/opencv.hpp>
+// #include "opencv2/objdetect/objdetect.hpp"
+// #include "opencv2/highgui/highgui.hpp"
+// #include "opencv2/imgproc/imgproc.hpp"
 #include <iostream>
-#include <sys/types.h>
-#include <signal.h>
+//#include <sys/types.h>
+//#include <signal.h>
 #include"class.h"
 //#include "constante.h"
 #include "fonction.h"
@@ -30,6 +33,9 @@ using namespace std;
 
 const int NB_RES=13;
 const int RES_TABLE[13][2]={{176,144},{160,120},{320,176},{320,240},{352,288},{432,240},{800,600},{864,480},{960,544},{960,720},{1184,656},{1280,720},{1280,960}};
+
+
+
 
 
 int main(int argc, char *argv[])
@@ -52,15 +58,36 @@ int main(int argc, char *argv[])
     char key;
 	vector<uchar> sockData;
 	Mat*  img;
+	Mat*  img2;
 	int  imgSize;
 	pid_t pid ;
 	int ctr_img = 0;
 	char sctr_img[50];
     portno = PORT;
+    CascadeClassifier face_cascade;
+    CascadeClassifier eyes_cascade;
+    String face_cascade_name = "haarcascade_frontalface_alt.xml" ;//"haarcascade_frontalface_alt.xml";
+    String eyes_cascade_name = "haarcascade_eye_tree_eyeglasses.xml";//"haarcascade_eye_tree_eyeglasses.xml";
 
 	// Populer les resolutions
 	ResolutionFPS rfps[13];
 	populerResolutions(rfps,RES_TABLE);
+
+
+    // PreDefined trained XML classifiers with facial features
+    //CascadeClassifier cascade, nestedCascade;
+   // double scale=1;
+
+    // Load classifiers from "opencv/data/haarcascades" directory
+    //nestedCascade.load( "../../haarcascade_eye_tree_eyeglasses.xml" ) ;
+
+    // Change path before execution
+   // cascade.load( "../../haarcascade_frontalcatface.xml" ) ;
+
+	   //-- 1. Load the cascades
+	   if( !face_cascade.load( face_cascade_name ) ){ printf("--(!)Error loading\n"); return -1; };
+	   if( !eyes_cascade.load( eyes_cascade_name ) ){ printf("--(!)Error loading\n"); return -1; };
+
 
     // Create TCP socket using socket
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -120,18 +147,23 @@ int main(int argc, char *argv[])
 					pid = fork();
 					if(pid == 0)
 					{
-
-						sprintf(sctr_img,"/export/tmp/4205_07/projet/Client%u.png",ctr_img);
-						imwrite(sctr_img, *img);
+						img2=new Mat;
+						*img2=*img;
+						//sprintf(sctr_img,"/export/tmp/4205_07/projet/Client%u.png",ctr_img);
+						//imwrite(sctr_img, *img);
 						//cout<<"Child"<<pid<<endl; //utile pour debug
+						//detectAndDraw( *img, cascade,nestedCascade, scale, ctr_img);
+						//detectAndDisplay( *img ,ctr_img);
 
-
-						return 0;
+						detectAndDisplay( *img2 ,face_cascade,eyes_cascade,ctr_img);
+						if(img2!=0){delete img2;}
+						img2=0;
+						exit(0);
 
 					}
 					else if (pid>0)
 					{
-
+						//(waitKey(60));
 
 					   // Show image
 					   namedWindow("Client", WINDOW_AUTOSIZE );
@@ -151,6 +183,7 @@ int main(int argc, char *argv[])
 					//cout<<"Parent"<<pid<<endl; //utile pour debug
 				 }
 			   //Prepare next set;
+				//waitKey(5);
 				if(img!=0){delete img;}
 				img=0;
 

@@ -10,7 +10,11 @@
 //#include<string>
 #include<stdio.h>
 #include<stdlib.h>
-//#include<opencv2/opencv.hpp>
+#include<opencv2/opencv.hpp>
+//#include<opencv2/imgproc.hpp>
+ #include "opencv2/objdetect/objdetect.hpp"
+ #include "opencv2/highgui/highgui.hpp"
+ #include "opencv2/imgproc/imgproc.hpp"
 //#include <opencv2/core/core.hpp>
 //#include<opencv2/core.hpp>
 //#include<opencv2/imgproc.hpp>
@@ -19,7 +23,7 @@
 #include "class.h"
 //#include "constante.h"
 
-//using namespace cv;
+using namespace cv;
 //using namespace std;
 
 void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2]);
@@ -28,6 +32,13 @@ void error(const char *msg);
 
 int choixUser(ResolutionFPS (&rfps)[13]);
 
+//void detectAndDraw( Mat& img, CascadeClassifier& cascade,
+//                    CascadeClassifier& nestedCascade,
+//                    double scale, int ctr_img);
+
+
+
+void detectAndDisplay( Mat& frame ,CascadeClassifier& face_cascade,CascadeClassifier& eyes_cascade,int ctr_img);
 
 #endif
 

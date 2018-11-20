@@ -1,5 +1,26 @@
 #ifndef CLASS_H
 #define CLASS_H
+
+#include<cmath>
+#include<cstring>
+#include<cstdio>
+#include<cstdlib>
+#include<math.h>
+#include<iostream>
+#include<fstream>
+#include<string>
+#include<stdio.h>
+#include<stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <vector>
+
+void error(const char *msg);
+
 //CPP
 
 class Resolution
@@ -52,6 +73,53 @@ Resolution operator*(const double factor, const Resolution &b);
 Resolution operator/(const double factor, const Resolution &b);
 ResolutionFPS operator*(const double factor, const ResolutionFPS &b);
 ResolutionFPS operator/(const double factor, const ResolutionFPS &b);
+
+
+class Serveur
+{
+private:
+	int sockfd, newsockfd, portno;
+	long int bytes;
+	struct sockaddr_in serv_addr, cli_addr; // adress structure
+	int n;
+	socklen_t clilen;
+public:
+
+	Serveur();
+	Serveur(int portNum){initServeur(portNum);return;};
+	~Serveur(){};
+	void initServeur(int portNum);
+	int get_sockfd()const{ return sockfd; };
+	int get_newsockfd()const{ return newsockfd; };
+	int get_portno()const{ return portno; };
+	int get_n()const{ return n; };
+	long int get_bytes()const{ return bytes; };
+	struct sockaddr_in  get_serv_addr()const{ return serv_addr; };
+	struct sockaddr_in  get_cli_addr()const{ return cli_addr; };
+	socklen_t  get_clilen()const{ return clilen; };
+	void set_sockfd(int a){ sockfd = a; };
+	void set_newsockfd(int a){ newsockfd = a; };
+	void set_portno(int a){ portno = a; };
+	void set_n( int a){ n = a; };
+	void set_bytes(long int a){ bytes = a; };
+	void set_serv_addr(int a){
+		serv_addr.sin_family = AF_INET;
+	 serv_addr.sin_addr.s_addr = INADDR_ANY;
+	 serv_addr.sin_port = htons(a);};
+	void set_cli_addr(int a){
+		cli_addr.sin_family = AF_INET;
+		cli_addr.sin_addr.s_addr = INADDR_ANY;
+		cli_addr.sin_port = htons(a);};
+	void set_clilen( socklen_t a){ clilen = a; };
+
+	void servAccept();
+
+
+
+
+};
+
+
 
 #endif
 
