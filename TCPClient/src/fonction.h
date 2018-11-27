@@ -26,42 +26,48 @@
 using namespace cv;
 //using namespace std;
 
+
+/**
+ * void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2])
+ * \brief Pass an object table by reference and assign resolutions X and Y to each instantiation .
+ * @param frps
+ * @param table
+ */
 void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2]);
 
+/**
+ * void error(const char *msg)
+ * \brief Display an error message in console
+ * @param msg The message to be displayed
+ */
 void error(const char *msg);
 
+/**
+ * @fn choixUser
+ * \brief Offers the user a contextual menu to choose between 4 resolutions using keys 1 to 4.
+ * @param rfps The object containing the resolutions according to their index from 1 to 13.
+ * @return
+ */
 int choixUser(ResolutionFPS (&rfps)[13]);
 
-//void detectAndDraw( Mat& img, CascadeClassifier& cascade,
-//                    CascadeClassifier& nestedCascade,
-//                    double scale, int ctr_img);
+/**
+ * \fn detectAndDisplay
+ * \brief
+ * @param frame
+ * @param face_cascade
+ * @param eyes_cascade
+ * @param ctr_img
+ */
+//void detectAndDisplay( Mat& frame ,CascadeClassifier& face_cascade,CascadeClassifier& eyes_cascade,int ctr_img);
+void detectAndDisplay( char* adress ,CascadeClassifier& face_cascade,CascadeClassifier& eyes_cascade,int ctr_img);
 
-
-
-void detectAndDisplay( Mat& frame ,CascadeClassifier& face_cascade,CascadeClassifier& eyes_cascade,int ctr_img);
+/**
+ * \fn read_csv
+ * @param filename
+ * @param images
+ * @param labels
+ * @param separator
+ */
+//static void read_csv(const string& filename, vector<Mat>& images, vector<int>& labels, char separator = ';');
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-//int detectCamera();
-
-//int populerFPS(ResolutionFPS (&rfps)[13]);
-
-//void capture5SEC(int choix);
-
-//int choixUser(ResolutionFPS (&rfps)[13]);
-
-//void enregistVideo(ResolutionFPS (&rfps)[13],int choix);
-
-//void initCapture(VideoCapture &capture,ResolutionFPS &rfps);
-
-//void captureImage(VideoCapture &capture,Mat &frame);

@@ -28,12 +28,6 @@ using namespace std;
 using namespace cv;
 
 
-/**
- * void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2])
- * \brief Pass an object table by reference and assign resolutions X and Y to each instantiation .
- * @param frps
- * @param table
- */
 void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2])
 {
 
@@ -79,85 +73,15 @@ int choixUser(ResolutionFPS (&rfps)[13])
 }
 
 
-//void detectAndDraw( Mat& img, CascadeClassifier& cascade,
-//                    CascadeClassifier& nestedCascade,
-//                    double scale, int ctr_img)
-//{
-//    vector<Rect> faces, faces2;
-//    Mat gray, smallImg;
-//    char sctr_img[50];
-//
-//    cvtColor( img, gray, COLOR_BGR2GRAY ); // Convert to Gray Scale
-//    double fx = 1 / scale;
-//
-//    // Resize the Grayscale Image
-//    resize( gray, smallImg, Size(), fx, fx, INTER_LINEAR );
-//    equalizeHist( smallImg, smallImg );
-//
-//    // Detect faces of different sizes using cascade classifier
-//    cascade.detectMultiScale( smallImg, faces, 1.1,
-//                            2, 0|CASCADE_SCALE_IMAGE, Size(30, 30) );
-//
-//    // Draw circles around the faces
-//    for ( size_t i = 0; i < faces.size(); i++ )
-//    {
-//        Rect r = faces[i];
-//        Mat smallImgROI;
-//        vector<Rect> nestedObjects;
-//        Point center;
-//        Scalar color = Scalar(255, 0, 0); // Color for Drawing tool
-//        int radius;
-//
-//        double aspect_ratio = (double)r.width/r.height;
-//        if( 0.75 < aspect_ratio && aspect_ratio < 1.3 )
-//        {
-//            center.x = cvRound((r.x + r.width*0.5)*scale);
-//            center.y = cvRound((r.y + r.height*0.5)*scale);
-//            radius = cvRound((r.width + r.height)*0.25*scale);
-//            circle( img, center, radius, color, 3, 8, 0 );
-//        }
-//        else
-//            rectangle( img, cvPoint(cvRound(r.x*scale), cvRound(r.y*scale)),
-//                    cvPoint(cvRound((r.x + r.width-1)*scale),
-//                    cvRound((r.y + r.height-1)*scale)), color, 3, 8, 0);
-//        if( nestedCascade.empty() )
-//            continue;
-//        smallImgROI = smallImg( r );
-//
-//        // Detection of eyes int the input image
-//        nestedCascade.detectMultiScale( smallImgROI, nestedObjects, 1.1, 2,
-//                                        0|CASCADE_SCALE_IMAGE, Size(30, 30) );
-//
-//        // Draw circles around eyes
-//        for ( size_t j = 0; j < nestedObjects.size(); j++ )
-//        {
-//            Rect nr = nestedObjects[j];
-//            center.x = cvRound((r.x + nr.x + nr.width*0.5)*scale);
-//            center.y = cvRound((r.y + nr.y + nr.height*0.5)*scale);
-//            radius = cvRound((nr.width + nr.height)*0.25*scale);
-//            circle( img, center, radius, color, 3, 8, 0 );
-//        }
-//    }
-//
-//    // Show Processed Image with detected faces
-// //   imshow( "Face Detection", img );
-//
-//sprintf(sctr_img,"/export/tmp/4205_07/projet/DetectPIC%u.png",ctr_img);
-//imwrite(sctr_img, img);
-//
-//}
 
 
-
-
-
-/** @function detectAndDisplay */
-void detectAndDisplay( Mat& frame ,CascadeClassifier& face_cascade,CascadeClassifier& eyes_cascade,int ctr_img)
+//void detectAndDisplay( Mat& frame ,CascadeClassifier& face_cascade,CascadeClassifier& eyes_cascade,int ctr_img)
+void detectAndDisplay( char* adress ,CascadeClassifier& face_cascade,CascadeClassifier& eyes_cascade,int ctr_img)
 {
   std::vector<Rect> faces;
   Mat frame_gray;
   char sctr_img[50];
-
+  Mat frame =imread(adress);
   cvtColor( frame, frame_gray, CV_BGR2GRAY );
   equalizeHist( frame_gray, frame_gray );
 
@@ -166,21 +90,29 @@ void detectAndDisplay( Mat& frame ,CascadeClassifier& face_cascade,CascadeClassi
 
   for( int i = 0; i < faces.size(); i++ )
   {
-    Point center( faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5 );
-    ellipse( frame, center, Size( faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, Scalar( 255, 0, 255 ), 4, 8, 0 );
+    //Point center( faces[i].x + faces[i].width*0.5, faces[i].y + faces[i].height*0.5 );
+    //ellipse( frame, center, Size( faces[i].width*0.5, faces[i].height*0.5), 0, 0, 360, Scalar( 255, 0, 255 ), 4, 8, 0 );
 
-    Mat faceROI = frame_gray( faces[i] );
-    std::vector<Rect> eyes;
+    Point point1(faces[i].x, faces[i].y);
 
-    //-- In each face, detect eyes
-    eyes_cascade.detectMultiScale( faceROI, eyes, 1.1, 2, 0 |CV_HAAR_SCALE_IMAGE, Size(30, 30) );
+    Point point2(faces[i].x + faces[i].width,
+                                 faces[i].y + faces[i].height);
 
-    for( int j = 0; j < eyes.size(); j++ )
-     {
-       Point center( faces[i].x + eyes[j].x + eyes[j].width*0.5, faces[i].y + eyes[j].y + eyes[j].height*0.5 );
-       int radius = cvRound( (eyes[j].width + eyes[j].height)*0.25 );
-       circle( frame, center, radius, Scalar( 255, 0, 0 ), 4, 8, 0 );
-     }
+    rectangle(frame, point1, point2, Scalar( 255, 0,0, 255 ), 4, 8, 0 );
+
+
+//    Mat faceROI = frame_gray( faces[i] );
+//    std::vector<Rect> eyes;
+//
+//    //-- In each face, detect eyes
+//    eyes_cascade.detectMultiScale( faceROI, eyes, 1.1, 2, 0 |CV_HAAR_SCALE_IMAGE, Size(30, 30) );
+//
+//    for( int j = 0; j < eyes.size(); j++ )
+//     {
+//       Point center( faces[i].x + eyes[j].x + eyes[j].width*0.5, faces[i].y + eyes[j].y + eyes[j].height*0.5 );
+//       int radius = cvRound( (eyes[j].width + eyes[j].height)*0.25 );
+//       circle( frame, center, radius, Scalar( 255, 0, 0 ), 4, 8, 0 );
+//     }
   }
   //-- Show what you got
   //imshow( window_name, frame );
@@ -189,132 +121,23 @@ void detectAndDisplay( Mat& frame ,CascadeClassifier& face_cascade,CascadeClassi
  }
 
 
-
-//int detectCamera()
-//{
-//	std::system("lsusb | grep 046d:0825  > /home/root/trouver_cam.txt");
-//
-//	  ////FROM http://www.cplusplus.com/doc/tutorial/files/
-//	  streampos begin,end;
-//	  ifstream myfile ("/home/root/trouver_cam.txt", ios::binary);
-//	  begin = myfile.tellg();
-//	  myfile.seekg (0, ios::end);
-//	  end = myfile.tellg();
-//	  myfile.close();
-//	  // cout << "size is: " << (end-begin) << " bytes.\n";
-//	  if((end-begin)!=0){
-//		  cout << "La bonne camera a ete trouvee.\n";
-//		  return 1;
-//	  }
-//	  else{return 0;}
+//static void read_csv(const string& filename, vector<Mat>& images, vector<int>& labels, char separator = ';') {
+//    std::ifstream file(filename.c_str(), ifstream::in);
+//    if (!file) {
+//        string error_message = "No valid input file was given, please check the given filename.";
+//        CV_Error(Error::StsBadArg, error_message);
+//    }
+//    string line, path, classlabel;
+//    while (getline(file, line)) {
+//        stringstream liness(line);
+//        getline(liness, path, separator);
+//        getline(liness, classlabel);
+//        if(!path.empty() && !classlabel.empty()) {
+//            images.push_back(imread(path, 0));
+//            labels.push_back(atoi(classlabel.c_str()));
+//        }
+//    }
 //}
-
-
-//int populerFPS(ResolutionFPS (&rfps)[13]){
-//	//string nom_capture;
-//
-//for (int i = 0; i < 13; i++)
-//{
-//
-//	VideoCapture capture(0);
-//	capture.set(CV_CAP_PROP_FRAME_WIDTH,rfps[i].res.resX);
-//	capture.set(CV_CAP_PROP_FRAME_HEIGHT,rfps[i].res.resY);
-//	if(!capture.isOpened()){
-//		cout << "Failed to connect to the camera." << endl;
-//		return -1;
-//	}
-//	Mat frame, edges;
-//	// calibration de la camera
-//	capture >> frame;
-//	capture >> frame;
-//
-//	struct timespec start, end;
-//	clock_gettime( CLOCK_REALTIME, &start );
-//
-//	int frames=2;
-//
-//	for(int i=0; i<frames; i++){
-//		capture >> frame;
-//		if(frame.empty()){
-//		cout << "Failed to capture an image" << endl;
-//		return -1;
-//		}
-// //	    	cvtColor(frame, edges, CV_BGR2GRAY);
-// //	    	Canny(edges, edges, 0, 30, 3);
-//	}
-//
-//	clock_gettime( CLOCK_REALTIME, &end );
-//	double difference = (end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec)/1000000000.0d;
-//	// cout << "It took " << difference << " seconds to process " << frames << " frames" << endl;
-//	cout << "Capturing and processing " << frames/difference << " frames per second for " << rfps[i].res.resX << "x" << rfps[i].res.resY << endl;
-//	rfps[i].fps = frames/difference;
-//
-// //	    nom_capture = "capture"+itoa(i)+".png";
-// //	    cin >> nom_capture;
-// //		imwrite(nom_capture, frame);
-//	}
-//return 1;
-//}
-
-
-
-
-
-//void enregistVideo(ResolutionFPS (&rfps)[13],int choix){
-//
-//VideoWriter vidW("/home/root/capture-liv1.avi",CV_FOURCC('M','J','P','G'),round(rfps[choix].fps),Size(rfps[choix].res.resX,rfps[choix].res.resY),true);
-//VideoCapture capture2(0);
-//
-//capture2.set(CV_CAP_PROP_FRAME_WIDTH,rfps[choix].res.resX);
-//capture2.set(CV_CAP_PROP_FRAME_HEIGHT,rfps[choix].res.resY);
-//if(!capture2.isOpened()){
-//	cout << "Failed to connect to the camera." << endl;
-//}
-//Mat video;
-//
-//for (int i = 0; i < 5*((int)rfps[choix].fps); i++)
-//{
-//	cout << "Saving Frame number: " << i <<" in video." <<endl;
-//	capture2 >> video;
-//	vidW.write(video);
-//}
-//
-//}
-
-
-//void captureImage(VideoCapture &capture,Mat &frame)
-//{
-//	capture >> frame;
-//}
-
-
-//void initCapture(VideoCapture &capture,ResolutionFPS &rfps) ///Besoin d'envoyer rfps[choix]
-//{
-//	capture.set(CV_CAP_PROP_FRAME_WIDTH,rfps.res.resX);
-//	capture.set(CV_CAP_PROP_FRAME_HEIGHT,rfps.res.resY);
-//}
-
-
-//void capture5SEC(int choix)
-//{
-//		VideoCapture capture(0);
-//		capture.set(CV_CAP_PROP_FRAME_WIDTH,rfps[choix].res.resX);
-//		capture.set(CV_CAP_PROP_FRAME_HEIGHT,rfps[choix].res.resY);
-//		string nom_capture;
-//		Mat video;
-//
-//		for (int i = 0; i < 5*rfps[choix].fps; i++)
-//	{
-//						capture >> video;
-//	}
-//
-//		VideoWrite("capture-liv1.avi", video)
-//
-//}
-
-
-
-
 
 
 
