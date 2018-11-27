@@ -2,6 +2,7 @@
 //CLIENT///
 /*
  * Code taken from https://stackoverflow.com/questions/20314524/c-opencv-image-sending-through-socket
+ * createDir-Code taken https://www.geeksforgeeks.org/create-directoryfolder-cc-program/
  * Code taken from https://docs.opencv.org/2.4.5/doc/tutorials/objdetect/cascade_classifier/cascade_classifier.html#cascade-classifier
  */
 
@@ -78,8 +79,19 @@ int main(int argc, char *argv[])
     CascadeClassifier eyes_cascade;
     String face_cascade_name = "haarcascade_frontalface_alt.xml" ;
     String eyes_cascade_name = "haarcascade_eye_tree_eyeglasses.xml";
+    bool mode; //0 training/collect data , 1 reconaissance
+    string label="SAM";
+    string PATH="/export/tmp/4205_07/projet";
+    createDir(PATH,label);
+
 
 	//std::ofstream myfile ("/home/root/LOG.txt");
+//    ofstream file("/export/tmp/4205_07/projet/Face_Label_DATA.csv",ofstream::out);
+//    if (!file) {
+//        string error_message = "Could not open file";
+//        //CV_Error(Error::StsBadArg, error_message);
+//        cout<<error_message<<endl;
+//    }
 
 
 
@@ -155,10 +167,13 @@ int main(int argc, char *argv[])
 						//img2=new Mat;
 						//*img2=*img;
 
-						sprintf(sctr_img,"/export/tmp/4205_07/projet/PIC%u.png",ctr_img);
+						sprintf(sctr_img,"/export/tmp/4205_07/projet/%s/%u.png",label.c_str(),ctr_img);
 						imwrite(sctr_img, *img);
+
+						writeToCSV("/export/tmp/4205_07/projet/Face_Label_DATA.csv",sctr_img, label, ctr_img);
+
 						//img2 =imread("/export/tmp/4205_07/projet/PIC%u.png");
-						detectAndDisplay(sctr_img,face_cascade,eyes_cascade,ctr_img);
+						detectAndDisplay(sctr_img,face_cascade,eyes_cascade,ctr_img,PATH+"/"+label);
 
 						//if(img2!=0){delete img2;}
 						//img2=0;
@@ -215,7 +230,7 @@ int main(int argc, char *argv[])
    // Close the client connection using close
    close(sockfd);
 
- // myfile.close();
+//  file.close();
 
 
    cout<<"Logout Client"<<endl;

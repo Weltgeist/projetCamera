@@ -9,6 +9,8 @@
 //#include<fstream>
 //#include<string>
 #include<stdio.h>
+#include<string.h>
+#include<fstream>
 #include<stdlib.h>
 #include<opencv2/opencv.hpp>
 //#include<opencv2/imgproc.hpp>
@@ -22,9 +24,15 @@
 //#include<time.h>
 #include "class.h"
 //#include "constante.h"
+#include <bits/stdc++.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
 
 using namespace cv;
-//using namespace std;
+//using namespace cv::face;
+using namespace std;
+
 
 
 /**
@@ -59,7 +67,7 @@ int choixUser(ResolutionFPS (&rfps)[13]);
  * @param ctr_img
  */
 //void detectAndDisplay( Mat& frame ,CascadeClassifier& face_cascade,CascadeClassifier& eyes_cascade,int ctr_img);
-void detectAndDisplay( char* adress ,CascadeClassifier& face_cascade,CascadeClassifier& eyes_cascade,int ctr_img);
+void detectAndDisplay( char* adress ,CascadeClassifier& face_cascade,CascadeClassifier& eyes_cascade,int ctr_img,const string& Path,int mode=0);
 
 /**
  * \fn read_csv
@@ -68,6 +76,11 @@ void detectAndDisplay( char* adress ,CascadeClassifier& face_cascade,CascadeClas
  * @param labels
  * @param separator
  */
-//static void read_csv(const string& filename, vector<Mat>& images, vector<int>& labels, char separator = ';');
+static void read_csv(const string& filename, vector<Mat>& images, vector<int>& labels, char separator = ';'); //static
+
+void writeToCSV(const string& CSVfilename,const string& IMGfilename,string label, int ctr_img, char separator= ';');
+
+
+void createDir(const string& PATH,const string& label);
 
 #endif
