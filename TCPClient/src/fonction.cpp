@@ -15,9 +15,10 @@
 //#include <opencv2/core/core.hpp>
 //#include<opencv2/core.hpp>
 //#include<opencv2/imgproc.hpp>
- #include "opencv2/objdetect/objdetect.hpp"
- #include "opencv2/highgui/highgui.hpp"
- #include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/objdetect/objdetect.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+//#include "opencv2/face.hpp"
 //#include<opencv2/videoio.hpp>
 //#include<time.h>
 #include<limits>
@@ -31,6 +32,7 @@
 
 using namespace std;
 using namespace cv;
+
 
 
 void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2])
@@ -145,10 +147,12 @@ void detectAndDisplay( char* adress ,CascadeClassifier& face_cascade,CascadeClas
  }
 
 
-static void read_csv(const string& filename, vector<Mat>& images, vector<int>& labels, char separator) { //static
-    ifstream file(filename.c_str(),ifstream::in);
+static void read_csv(const string& filename, vector<Mat>& images, vector<string>& labels, char separator) { //static
+	images.clear();
+	labels.clear();
+	ifstream file(filename.c_str(),ifstream::in);
     if (!file) {
-        string error_message = "No valid input file was given, please check the given filename.";
+        string error_message = "No valid input file was given, please check the given filename.\n";
         //CV_Error(Error::StsBadArg, error_message);
         cout<<error_message<<endl;
     }
@@ -160,9 +164,10 @@ static void read_csv(const string& filename, vector<Mat>& images, vector<int>& l
 			getline(liness, classlabel,separator);
 			if(!path.empty() && !classlabel.empty()) {
 				images.push_back(imread(path, 0));
-				labels.push_back(atoi(classlabel.c_str()));
+				labels.push_back(classlabel.c_str());
 			}
 		}
+		file.close();
     }
 }
 
@@ -179,8 +184,6 @@ void writeToCSV(const string& CSVfilename,const string& IMGfilename,string label
     	file<<IMGfilename<<separator<<label<<separator<<ctr_img<<separator<<endl;
     }
     file.close();
-
-
 }
 
 void createDir(const string& PATH,const string& label)
@@ -192,12 +195,129 @@ void createDir(const string& PATH,const string& label)
         cerr << "Error :  " << strerror(errno) << endl;
 
     else
-        cout << "Directory created";
+        cout << "Directory created\n";
 }
 
 
 
+int choixMode()
+{
+	int mode, personne;
+	char modecar[1000];
+	char* ptr;
+	cout << "Choisissez un mode parmi les suivants:\n1- Apprentissage\n2- Reconnaissance\n";
+	cin >> mode;
+	std::cin.ignore(std::numeric_limits<char>::max(),'\n');
+
+	while (mode < 1 || mode > 2) {
+		cout << "L'entree doit etre un nombre de 1 a 2, choisissez a nouveau.\n";
+		cin >> mode;
+		std::cin.ignore(std::numeric_limits<char>::max(),'\n');
+	}
+
+	return --mode;
+}
 
 
+int choixPersonne(vector<string>& listeNoms, vector<Mat>& images, vector<string>& labels, const string& PATH, const string& PathCSV, int ctr_img)
+{
+	int personne = 0;
+	string nom;
+	string label;
+	int vide = 1;
+
+	cout << "Choisissez une personne parmi les suivantes:\n";
+	int i;
+	cout << 0 << " - Nouveau" << endl;
+	if (sizeof(listeNoms) > 0) {
+		for (i = 0; i < listeNoms.size(); i++){
+			cout << i+1 << " - " << listeNoms[i] << endl;
+		}
+		vide = 0;
+	}
+	else {
+		vide = 1;
+	}
+	cin >> personne;
+	std::cin.ignore(std::numeric_limits<char>::max(),'\n');
+
+	while (personne < 0 || personne > i+1) {
+		cout << "L'entree doit etre un nombre de 0 a " << i+1 << ", choisissez a nouveau.\n";
+		cin >> personne;
+		std::cin.ignore(std::numeric_limits<char>::max(),'\n');
+	}
+
+	// Nouvelle personne
+	if (personne == 0){
+		cout << "Entrez le nom de la personne, sans espaces.\n";
+		cin >> nom;
+		std::cin.ignore(std::numeric_limits<char>::max(),'\n');
+		listeNoms.push_back(nom);
+		personne = listeNoms.size()-1;
+		label = nom;
+		createDir(PATH,label);
+	}
+	// Personne ayant deja un dossier et des photos
+	else {
+		personne--;
+	}
+
+	return personne;
+}
+
+
+int find_ctr_img(vector<string>& listeNoms, vector<Mat>& images, vector<string>& labels, const string& PATH, const string& PathCSV, int personne)
+{
+	int ctr_img = 0;
+	read_csv(PathCSV, images, labels);
+	for (int i = 0; i < labels.size(); i++){
+		if (labels[i].compare(listeNoms[personne]) == 0) {
+			ctr_img++;
+		}
+	}
+	return ctr_img;
+}
+
+
+
+void recon(vector<string>& listeNoms, vector<Mat>& images, vector<string>& labels, const string& PATH, const string& PathCSV, int personne, Mat& img2)
+{
+	char sctr_img[100];
+	Mat img = imread("/export/tmp/4205_07/projet/recon.png", CV_LOAD_IMAGE_GRAYSCALE);
+
+	try {
+
+    	read_csv(PathCSV, images, labels);
+    } catch (const cv::Exception& e) {
+        cerr << "Error opening file \"" << PathCSV << "\". Reason: " << e.msg << endl;
+        // nothing more we can do
+        exit(1);
+    }
+
+    vector<int> labels_int;
+	for (int i = 0; i < labels.size(); i++){
+		if (labels[i].compare(listeNoms[personne]) == 0) {
+			labels_int.push_back(personne);
+		}
+	}
+
+    Mat testSample = images[images.size() - 1];
+    int testLabel = labels_int[labels_int.size() - 1];
+    images.pop_back();
+    labels.pop_back();
+
+    Ptr<FaceRecognizer> model =  createLBPHFaceRecognizer();
+    model->train(images, labels_int);
+    int predicted = model->predict(img);
+
+    string result_message = format("Predicted class = %d / Actual class = %d.", predicted, testLabel);
+    cout << result_message << endl;
+
+    string nom = listeNoms[0]; //predicted
+    putText(img, nom, cvPoint(30,30), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(200,200,250), 1, CV_AA);
+    sprintf(sctr_img,"%s/recon.png",PATH.c_str());
+    imwrite(sctr_img, img);
+
+}
 
 

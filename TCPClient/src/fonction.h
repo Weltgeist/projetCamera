@@ -76,11 +76,19 @@ void detectAndDisplay( char* adress ,CascadeClassifier& face_cascade,CascadeClas
  * @param labels
  * @param separator
  */
-static void read_csv(const string& filename, vector<Mat>& images, vector<int>& labels, char separator = ';'); //static
+static void read_csv(const string& filename, vector<Mat>& images, vector<string>& labels, char separator = ';');
 
 void writeToCSV(const string& CSVfilename,const string& IMGfilename,string label, int ctr_img, char separator= ';');
 
-
 void createDir(const string& PATH,const string& label);
+
+int choixMode();
+
+int choixPersonne(vector<string>& listeNoms, vector<Mat>& images, vector<string>& labels, const string& PATH, const string& PathCSV, int ctr_img);
+
+int find_ctr_img(vector<string>& listeNoms, vector<Mat>& images, vector<string>& labels, const string& PATH, const string& PathCSV, int personne);
+
+void recon(vector<string>& listeNoms, vector<Mat>& images, vector<string>& labels, const string& PATH, const string& PathCSV, int personne, Mat& img);
+
 
 #endif

@@ -2,8 +2,16 @@
 //CLIENT///
 /*
  * Code taken from https://stackoverflow.com/questions/20314524/c-opencv-image-sending-through-socket
- * createDir-Code taken https://www.geeksforgeeks.org/create-directoryfolder-cc-program/
+ * createDir-Code taken from https://www.geeksforgeeks.org/create-directoryfolder-cc-program/
  * Code taken from https://docs.opencv.org/2.4.5/doc/tutorials/objdetect/cascade_classifier/cascade_classifier.html#cascade-classifier
+ * Code taken from https://www.superdatascience.com/opencv-face-recognition/?fbclid=IwAR06Q9KKUCob0067iXzQogP6oozvgMveGPpSD-v7IscJ1Mi1DOHSWlYcrlw
+ * read_csv - Code taken from https://docs.opencv.org/3.4/da/d60/tutorial_face_main.html
+ * https://docs.opencv.org/2.4/modules/contrib/doc/facerec/facerec_api.html
+ */
+
+/*
+ * Copyright (c) 2011. Philipp Wagner <bytefish[at]gmx[dot]de>.
+ * Released to public domain under terms of the BSD Simplified license.
  */
 
 #include <stdio.h>
@@ -79,10 +87,16 @@ int main(int argc, char *argv[])
     CascadeClassifier eyes_cascade;
     String face_cascade_name = "haarcascade_frontalface_alt.xml" ;
     String eyes_cascade_name = "haarcascade_eye_tree_eyeglasses.xml";
-    bool mode; //0 training/collect data , 1 reconaissance
-    string label="SAM";
-    string PATH="/export/tmp/4205_07/projet";
-    createDir(PATH,label);
+    int mode; //0 training/collect data , 1 reconaissance
+    int personne;
+    //string label="SAM";
+    string PATH="/export/tmp/4205_07/projet"; //Path dans lequel les folders contenant les photos seront places
+    string PathCSV = "/export/tmp/4205_07/projet/Face_Label_DATA.csv";
+    vector<Mat> listImages;
+	vector<string> labels;
+	vector<string> listeNoms;
+
+    //createDir(PATH,label);
 
 
 	//std::ofstream myfile ("/home/root/LOG.txt");
@@ -93,7 +107,14 @@ int main(int argc, char *argv[])
 //        cout<<error_message<<endl;
 //    }
 
-
+	mode = choixMode();
+	if (mode == 0){
+		personne = choixPersonne(listeNoms, listImages, labels, PATH, PathCSV, ctr_img);
+		ctr_img = find_ctr_img(listeNoms, listImages, labels, PATH, PathCSV, personne);
+	}
+//	cout << personne << endl;
+//	cout << ctr_img << endl;
+	cout << mode << endl;
 
 	// Populer les resolutions
 	ResolutionFPS rfps[13];
@@ -167,13 +188,22 @@ int main(int argc, char *argv[])
 						//img2=new Mat;
 						//*img2=*img;
 
-						sprintf(sctr_img,"/export/tmp/4205_07/projet/%s/%u.png",label.c_str(),ctr_img);
+						sprintf(sctr_img,"/export/tmp/4205_07/projet/%s/cropresizePIC%u.png",listeNoms[personne].c_str(),ctr_img);
 						imwrite(sctr_img, *img);
 
-						writeToCSV("/export/tmp/4205_07/projet/Face_Label_DATA.csv",sctr_img, label, ctr_img);
+						if (mode == 0){ //Apprentissage
+							writeToCSV("/export/tmp/4205_07/projet/Face_Label_DATA.csv",sctr_img, listeNoms[personne], ctr_img);
 
-						//img2 =imread("/export/tmp/4205_07/projet/PIC%u.png");
-						detectAndDisplay(sctr_img,face_cascade,eyes_cascade,ctr_img,PATH+"/"+label);
+							//img2 =imread("/export/tmp/4205_07/projet/PIC%u.png");
+							detectAndDisplay(sctr_img,face_cascade,eyes_cascade,ctr_img,PATH+"/"+listeNoms[personne]);
+						}
+						////////////////////////////
+//						else if (mode == 1){ //Reconnaissance
+//							sprintf(sctr_img,"/export/tmp/4205_07/projet/recon.png");
+//							imwrite(sctr_img, *img);
+//							//detectAndDisplay(sctr_img,face_cascade,eyes_cascade,ctr_img,PATH+"/");
+//							recon(listeNoms, listImages, labels, PATH, PathCSV, personne, *img); //pas img, aller chercher le cropresize?
+//						}
 
 						//if(img2!=0){delete img2;}
 						//img2=0;
@@ -187,6 +217,15 @@ int main(int argc, char *argv[])
 					   namedWindow("Client", WINDOW_AUTOSIZE );
 					   imshow( "Client", *img);
 						//cout<<"Parent"<<pid<<endl; //utile pour debug
+
+					   ///////////////////////////
+					   if (mode == 1){ //Reconnaissance
+							sprintf(sctr_img,"/export/tmp/4205_07/projet/recon.png");
+							imwrite(sctr_img, *img);
+							//detectAndDisplay(sctr_img,face_cascade,eyes_cascade,ctr_img,PATH+"/");
+							recon(listeNoms, listImages, labels, PATH, PathCSV, personne, *img); //pas img, aller chercher le cropresize?
+						}
+
 				}
 				else
 				{
@@ -212,12 +251,19 @@ int main(int argc, char *argv[])
 			//Test key
 		   if (key == 27) {break;}
 		   //Create New Message: Ok+RES
-		   if (key == 97){
+		   if (key == 97){ //a
 			   choix0_3 = choixUser(rfps);
 			   choix = table[choix0_3];
 		   }
 			messages = (choix0_3<<1)+ELE4205_OK;
 			//cout<<messages<<endl;
+			if (key == 98){ //b
+				mode = choixMode();
+				if (mode == 0){
+					personne = choixPersonne(listeNoms, listImages, labels, PATH, PathCSV, ctr_img);
+					ctr_img = find_ctr_img(listeNoms, listImages, labels, PATH, PathCSV, personne);
+				}
+			}
 		}
 
 
