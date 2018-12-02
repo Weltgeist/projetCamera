@@ -1,6 +1,15 @@
 #ifndef CLASS_H
 #define CLASS_H
 
+#include <opencv2/opencv.hpp>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <iostream>
+#include <vector>
+using namespace cv;
 
 class Resolution
 {
@@ -54,54 +63,77 @@ ResolutionFPS operator*(const double factor, const ResolutionFPS &b);
 ResolutionFPS operator/(const double factor, const ResolutionFPS &b);
 
 
-//class Client
-//{
-//private:
-//	int sockfd, portno, connecySock;
-//    int connectSock;
-//    struct sockaddr_in serv_addr;
-//    struct hostent *server;
-////	long int bytes;
-////	struct sockaddr_in serv_addr, cli_addr; // adress structure
-////	int n;
-////	socklen_t clilen;
-//public:
-//
-//	Client();
-////	Serveur(int portNum){initServeur(portNum);return;};
-//	~Client(){};
-//	void initClient(int portNum);
-//	void clientConnect();
-//	void clientRcvSendInitImg();
-//	void clientFork();
-//	void clientQuit();
+class Client
+{
+private:
+	CascadeClassifier face_cascade;
+	CascadeClassifier eyes_cascade;
+    String face_cascade_name;
+    String eyes_cascade_name;
+	int sockfd, portno, connectSock;
+    struct sockaddr_in serv_addr;
+    struct hostent *server;
+    int n;
+	uint32_t messages;
+	char buffer[256];
+	char* ptrBuffer;
+	Mat* img;
+	int imgSize;
+	vector<uchar> sockData;
+	pid_t pid;
+	char sctr_img[50];
+	string PATH; //Path dans lequel les folders contenant les photos seront places
+	string PathCSV;
+	vector<Mat> listImages;
+	vector<string> labels;
+	vector<string> listeNoms;
 
-//	int get_sockfd()const{ return sockfd; };
-//	int get_newsockfd()const{ return newsockfd; };
-//	int get_portno()const{ return portno; };
-//	int get_n()const{ return n; };
-//	long int get_bytes()const{ return bytes; };
-//	struct sockaddr_in  get_serv_addr()const{ return serv_addr; };
-//	struct sockaddr_in  get_cli_addr()const{ return cli_addr; };
-//	socklen_t  get_clilen()const{ return clilen; };
-//	void set_sockfd(int a){ sockfd = a; };
-//	void set_newsockfd(int a){ newsockfd = a; };
-//	void set_portno(int a){ portno = a; };
-//	void set_n( int a){ n = a; };
-//	void set_bytes(long int a){ bytes = a; };
-//	void set_serv_addr(int a){
-//		serv_addr.sin_family = AF_INET;
-//	 serv_addr.sin_addr.s_addr = INADDR_ANY;
-//	 serv_addr.sin_port = htons(a);};
-//	void set_cli_addr(int a){
-//		cli_addr.sin_family = AF_INET;
-//		cli_addr.sin_addr.s_addr = INADDR_ANY;
-//		cli_addr.sin_port = htons(a);};
-//	void set_clilen( socklen_t a){ clilen = a; };
-//
-//
+public:
 
-//};
+	Client(){
+		face_cascade_name = "haarcascade_frontalface_alt.xml" ;
+		eyes_cascade_name = "haarcascade_eye_tree_eyeglasses.xml";
+		PATH="/export/tmp/4205_07/projet"; //Path dans lequel les folders contenant les photos seront places
+		PathCSV = "/export/tmp/4205_07/projet/Face_Label_DATA.csv";
+	}
+	~Client(){};
+	void error(const char *msg);
+	void createDir(const string& label);
+	int choixPersonne(int ctr_img);
+	void read_csv(char separator = ';');
+	int find_ctr_img(int personne);
+	void loadCascades();
+	void initClient();
+	void clientConnect();
+	uint32_t clientRcvSend();
+	void clientInitImg(ResolutionFPS (&rfps)[13], int choix);
+	void writeToCSV(const string& CSVfilename,const string& IMGfilename,string label, int ctr_img, char separator=';');
+	void detectAndDisplay( char* adress,int ctr_img,const string& Path,int mode=0, std::vector<Rect>* ptrFace=NULL);
+	void recon(int personne);
+	void clientFork(int mode, int ctr_img, int personne);
+	void showImage();
+	void deleteimg();
+	int testKey(char key);
+	void clientQuit();
+
+	int get_sockfd()const{ return sockfd; };
+	int get_portno()const{ return portno; };
+	struct sockaddr_in  get_serv_addr()const{ return serv_addr; };
+	int get_n()const{ return n; };
+	Mat* get_img()const{return img;};
+	int get_imgSize()const{ return imgSize; };
+
+	void set_sockfd(int a){ sockfd = a; };
+	void set_portno(int a){ portno = a; };
+	void set_serv_addr(int a){
+		serv_addr.sin_family = AF_INET;
+		serv_addr.sin_addr.s_addr = INADDR_ANY;
+		serv_addr.sin_port = htons(a);};
+	void set_n( int a){ n = a; };
+	void set_messages(uint32_t a){messages = a;};
+
+
+};
 
 
 
