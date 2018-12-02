@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
     String face_cascade_name = "haarcascade_frontalface_alt.xml" ;
     String eyes_cascade_name = "haarcascade_eye_tree_eyeglasses.xml";
     int mode; //0 training/collect data , 1 reconaissance
-    int personne;
+    int personne = 0;
     //string label="SAM";
     string PATH="/export/tmp/4205_07/projet"; //Path dans lequel les folders contenant les photos seront places
     string PathCSV = "/export/tmp/4205_07/projet/Face_Label_DATA.csv";
@@ -96,16 +96,10 @@ int main(int argc, char *argv[])
 	vector<string> labels;
 	vector<string> listeNoms;
 
-    //createDir(PATH,label);
-
-
-	//std::ofstream myfile ("/home/root/LOG.txt");
-//    ofstream file("/export/tmp/4205_07/projet/Face_Label_DATA.csv",ofstream::out);
-//    if (!file) {
-//        string error_message = "Could not open file";
-//        //CV_Error(Error::StsBadArg, error_message);
-//        cout<<error_message<<endl;
-//    }
+//	listeNoms.push_back("GAB");
+//	listeNoms.push_back("GAB2");
+//	cout << listeNoms[0]<< endl;
+//	recon(listeNoms, listImages, labels, PATH, PathCSV, personne, *img);
 
 	mode = choixMode();
 	if (mode == 0){
@@ -198,12 +192,12 @@ int main(int argc, char *argv[])
 							detectAndDisplay(sctr_img,face_cascade,eyes_cascade,ctr_img,PATH+"/"+listeNoms[personne]);
 						}
 						////////////////////////////
-//						else if (mode == 1){ //Reconnaissance
-//							sprintf(sctr_img,"/export/tmp/4205_07/projet/recon.png");
-//							imwrite(sctr_img, *img);
-//							//detectAndDisplay(sctr_img,face_cascade,eyes_cascade,ctr_img,PATH+"/");
-//							recon(listeNoms, listImages, labels, PATH, PathCSV, personne, *img); //pas img, aller chercher le cropresize?
-//						}
+						else if (mode == 1){ //Reconnaissance
+							sprintf(sctr_img,"/export/tmp/4205_07/projet/TOrecon.png");
+							imwrite(sctr_img, *img);
+							//detectAndDisplay(sctr_img,face_cascade,eyes_cascade,ctr_img,PATH+"/");
+							recon(listeNoms, listImages, labels, PATH, PathCSV, personne, *img, face_cascade, eyes_cascade); //pas img, aller chercher le cropresize?
+						}
 
 						//if(img2!=0){delete img2;}
 						//img2=0;
@@ -219,12 +213,12 @@ int main(int argc, char *argv[])
 						//cout<<"Parent"<<pid<<endl; //utile pour debug
 
 					   ///////////////////////////
-					   if (mode == 1){ //Reconnaissance
-							sprintf(sctr_img,"/export/tmp/4205_07/projet/recon.png");
-							imwrite(sctr_img, *img);
-							//detectAndDisplay(sctr_img,face_cascade,eyes_cascade,ctr_img,PATH+"/");
-							recon(listeNoms, listImages, labels, PATH, PathCSV, personne, *img); //pas img, aller chercher le cropresize?
-						}
+//					   if (mode == 1){ //Reconnaissance
+//							sprintf(sctr_img,"/export/tmp/4205_07/projet/recon.png");
+//							imwrite(sctr_img, *img);
+//							//detectAndDisplay(sctr_img,face_cascade,eyes_cascade,ctr_img,PATH+"/");
+//							recon(listeNoms, listImages, labels, PATH, PathCSV, personne, *img); //pas img, aller chercher le cropresize?
+//						}
 
 				}
 				else

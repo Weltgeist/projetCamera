@@ -83,7 +83,7 @@ int choixUser(ResolutionFPS (&rfps)[13])
 
 
 //void detectAndDisplay( Mat& frame ,CascadeClassifier& face_cascade,CascadeClassifier& eyes_cascade,int ctr_img)
-void detectAndDisplay( char* adress ,CascadeClassifier& face_cascade,CascadeClassifier& eyes_cascade,int ctr_img,const string& Path,int mode)
+void detectAndDisplay( char* adress ,CascadeClassifier& face_cascade,CascadeClassifier& eyes_cascade,int ctr_img,const string& Path,int mode, std::vector<Rect>* ptrFace)
 {
   std::vector<Rect> faces;
   Size defautSIZE(144,176); // width,height
@@ -96,7 +96,10 @@ void detectAndDisplay( char* adress ,CascadeClassifier& face_cascade,CascadeClas
 
   //-- Detect faces
   face_cascade.detectMultiScale( frame_gray, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, Size(30, 30) );
-
+	if (mode==1)
+	{
+		*ptrFace=faces;
+	}
   for( int i = 0; i < faces.size(); i++ )
   {
 
@@ -147,7 +150,8 @@ void detectAndDisplay( char* adress ,CascadeClassifier& face_cascade,CascadeClas
  }
 
 
-static void read_csv(const string& filename, vector<Mat>& images, vector<string>& labels, char separator) { //static
+static void read_csv(const string& filename, vector<Mat>& images, vector<string>& labels, char separator)
+{
 	images.clear();
 	labels.clear();
 	ifstream file(filename.c_str(),ifstream::in);
@@ -241,26 +245,31 @@ int choixPersonne(vector<string>& listeNoms, vector<Mat>& images, vector<string>
 	cin >> personne;
 	std::cin.ignore(std::numeric_limits<char>::max(),'\n');
 
-	while (personne < 0 || personne > i+1) {
-		cout << "L'entree doit etre un nombre de 0 a " << i+1 << ", choisissez a nouveau.\n";
-		cin >> personne;
-		std::cin.ignore(std::numeric_limits<char>::max(),'\n');
-	}
 
-	// Nouvelle personne
-	if (personne == 0){
-		cout << "Entrez le nom de la personne, sans espaces.\n";
-		cin >> nom;
-		std::cin.ignore(std::numeric_limits<char>::max(),'\n');
-		listeNoms.push_back(nom);
-		personne = listeNoms.size()-1;
-		label = nom;
-		createDir(PATH,label);
-	}
-	// Personne ayant deja un dossier et des photos
-	else {
-		personne--;
-	}
+	// Verification
+		while (personne < 0 || personne > i+1) {
+			cout << "L'entree doit etre un nombre de 0 a " << i+1 << ", choisissez a nouveau.\n";
+			cin >> personne;
+			std::cin.ignore(std::numeric_limits<char>::max(),'\n');
+		}
+
+
+		// Nouvelle personne
+		if (personne == 0){ //Personne est un choix, mais en sortis de fonction c'est la position dans la liste de nom
+			cout << "Entrez le nom de la personne, sans espaces.\n";
+			cin >> nom; //new Name
+			std::cin.ignore(std::numeric_limits<char>::max(),'\n');
+			listeNoms.push_back(nom);
+			personne = listeNoms.size()-1;//new ID
+			label = nom;
+			createDir(PATH,label);//new DIR
+		}
+
+		// Personne ayant deja un dossier et des photos
+		else {
+			personne--;
+		}
+
 
 	return personne;
 }
@@ -269,10 +278,10 @@ int choixPersonne(vector<string>& listeNoms, vector<Mat>& images, vector<string>
 int find_ctr_img(vector<string>& listeNoms, vector<Mat>& images, vector<string>& labels, const string& PATH, const string& PathCSV, int personne)
 {
 	int ctr_img = 0;
-	read_csv(PathCSV, images, labels);
+	read_csv(PathCSV, images, labels);//label vector is a list of all names in csv files.
 	for (int i = 0; i < labels.size(); i++){
 		if (labels[i].compare(listeNoms[personne]) == 0) {
-			ctr_img++;
+			ctr_img++; //Counts how many of a specific name is in the label vector
 		}
 	}
 	return ctr_img;
@@ -280,10 +289,13 @@ int find_ctr_img(vector<string>& listeNoms, vector<Mat>& images, vector<string>&
 
 
 
-void recon(vector<string>& listeNoms, vector<Mat>& images, vector<string>& labels, const string& PATH, const string& PathCSV, int personne, Mat& img2)
+void recon(vector<string>& listeNoms, vector<Mat>& images, vector<string>& labels, const string& PATH, const string& PathCSV, int personne, Mat& imgx, CascadeClassifier& face_cascade,CascadeClassifier& eyes_cascade)
 {
 	char sctr_img[100];
-	Mat img = imread("/export/tmp/4205_07/projet/recon.png", CV_LOAD_IMAGE_GRAYSCALE);
+	int ctr_img = 0;
+	char A[100];
+    std::vector<Rect>* ptrFace=new  std::vector<Rect>;
+    std::vector<Rect> faces;
 
 	try {
 
@@ -296,28 +308,53 @@ void recon(vector<string>& listeNoms, vector<Mat>& images, vector<string>& label
 
     vector<int> labels_int;
 	for (int i = 0; i < labels.size(); i++){
-		if (labels[i].compare(listeNoms[personne]) == 0) {
-			labels_int.push_back(personne);
+		for (int j = 0; j < listeNoms.size(); j++){
+			cout<<"LN:"<<listeNoms.size()<<"j:"<<j<<"i:"<<i<<endl;
+			// probleme de compare strings //std::vector<Rect> faces;convertis labels(liste de string) en label(liste de int) pour train fonction
+			if (labels[i].compare(listeNoms[j]) == 0) {
+				labels_int.push_back(j);
+			}
 		}
 	}
 
-    Mat testSample = images[images.size() - 1];
+	Mat testSample = images[images.size() - 1];
     int testLabel = labels_int[labels_int.size() - 1];
     images.pop_back();
-    labels.pop_back();
+    labels_int.pop_back();
 
+    //Apprentissage
     Ptr<FaceRecognizer> model =  createLBPHFaceRecognizer();
     model->train(images, labels_int);
-    int predicted = model->predict(img);
 
-    string result_message = format("Predicted class = %d / Actual class = %d.", predicted, testLabel);
-    cout << result_message << endl;
 
-    string nom = listeNoms[0]; //predicted
-    putText(img, nom, cvPoint(30,30), FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(200,200,250), 1, CV_AA);
-    sprintf(sctr_img,"%s/recon.png",PATH.c_str());
-    imwrite(sctr_img, img);
+	sprintf(A,"/export/tmp/4205_07/projet/TOrecon.png");
+	detectAndDisplay(A,face_cascade,eyes_cascade,ctr_img,"/export/tmp/4205_07/projet/",1,ptrFace);
+	faces = *ptrFace;
+
+	for (int i = 0; i < faces.size(); i++) {
+		sprintf(sctr_img,"/export/tmp/4205_07/projet/cropresizePIC%d.png",i);
+		Mat img = imread(sctr_img, CV_LOAD_IMAGE_GRAYSCALE);
+
+		//Reconaissance
+		int predicted = model->predict(img);
+		string result_message = format("Predicted class = %d / Actual class = %d.", predicted, testLabel);
+		cout << result_message << endl;
+
+		Point point1(faces[i].x, faces[i].y);
+		Point point2(faces[i].x + faces[i].width, faces[i].y + faces[i].height);
+		Point point3(point1.x, point1.y-10);
+		string nom = listeNoms[predicted];
+
+		Mat img2 = imread("/export/tmp/4205_07/projet/TOrecon.png", CV_LOAD_IMAGE_GRAYSCALE);
+		rectangle(img2, point1, point2, Scalar( 255, 0,0, 255 ), 4, 8, 0 );
+		putText(img2, nom, point3, FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(200,200,250), 1, CV_AA);
+		sprintf(sctr_img,"%s/TOrecon.png",PATH.c_str());
+		imwrite(sctr_img, img2);
+	}
 
 }
+
+
+
 
 

@@ -67,7 +67,7 @@ int choixUser(ResolutionFPS (&rfps)[13]);
  * @param ctr_img
  */
 //void detectAndDisplay( Mat& frame ,CascadeClassifier& face_cascade,CascadeClassifier& eyes_cascade,int ctr_img);
-void detectAndDisplay( char* adress ,CascadeClassifier& face_cascade,CascadeClassifier& eyes_cascade,int ctr_img,const string& Path,int mode=0);
+void detectAndDisplay( char* adress ,CascadeClassifier& face_cascade,CascadeClassifier& eyes_cascade,int ctr_img,const string& Path,int mode=0,std::vector<Rect>* ptrFace=NULL);
 
 /**
  * \fn read_csv
@@ -88,7 +88,8 @@ int choixPersonne(vector<string>& listeNoms, vector<Mat>& images, vector<string>
 
 int find_ctr_img(vector<string>& listeNoms, vector<Mat>& images, vector<string>& labels, const string& PATH, const string& PathCSV, int personne);
 
-void recon(vector<string>& listeNoms, vector<Mat>& images, vector<string>& labels, const string& PATH, const string& PathCSV, int personne, Mat& img);
+void recon(vector<string>& listeNoms, vector<Mat>& images, vector<string>& labels, const string& PATH, const string& PathCSV, int personne, Mat& img, CascadeClassifier& face_cascade,CascadeClassifier& eyes_cascade);
+
 
 
 #endif
