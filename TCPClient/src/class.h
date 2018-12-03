@@ -134,7 +134,7 @@ public:
 	uint32_t clientRcvSend();
 	void clientInitImg(Resolution (&res)[13], int choix);
 	void writeToCSV(const string& CSVfilename,const string& IMGfilename,string label, int ctr_img, char separator=';');
-	void detectAndDisplay( char* adress,int ctr_img,const string& Path,int mode=0, std::vector<Rect>* ptrFace=NULL);
+	int detectAndDisplay( char* adress,int ctr_img,const string& Path,int mode=0, std::vector<Rect>* ptrFace=NULL);
 	void recon(int personne);
 	void clientFork(int mode, int ctr_img, int personne);
 	void showImage();

@@ -202,7 +202,7 @@ void Client::writeToCSV(const string& CSVfilename,const string& IMGfilename,stri
 }
 
 
-void Client::detectAndDisplay( char* adress,int ctr_img,const string& Path,int mode, std::vector<Rect>* ptrFace)
+int Client::detectAndDisplay( char* adress,int ctr_img,const string& Path,int mode, std::vector<Rect>* ptrFace)
 {
 	  std::vector<Rect> faces;
 	  Size defautSIZE(144,176); // width,height
@@ -212,6 +212,7 @@ void Client::detectAndDisplay( char* adress,int ctr_img,const string& Path,int m
 	  cvtColor( frame, frame_gray, CV_BGR2GRAY );
 	  equalizeHist( frame_gray, frame_gray );
 	  Mat faceROI2;
+	  int detect = 0;
 
 	  //-- Detect faces
 	  face_cascade.detectMultiScale( frame_gray, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, Size(30, 30) );
@@ -232,9 +233,7 @@ void Client::detectAndDisplay( char* adress,int ctr_img,const string& Path,int m
 			 resize(faceROI,faceROI2,defautSIZE);
 			 sprintf(sctr_img,"%s/cropresizePIC%u-%i.png",Path.c_str(),ctr_img,i);
 			 imwrite(sctr_img, faceROI2);
-		 }
-		 else{
-			 cout<<"Pas de face detectee"<<endl;
+			 detect = faces.size();
 		 }
 	  }
 
@@ -243,6 +242,8 @@ void Client::detectAndDisplay( char* adress,int ctr_img,const string& Path,int m
 	  if (faces.size()>0){
 
 	 }
+
+	  return detect;
  }
 
 
@@ -257,6 +258,7 @@ void Client::recon(int personne)
     string nom;
     int predicted;
     double current_threshold;
+    int detect = 0;
 
 	try {
 		read_csv();
@@ -287,38 +289,59 @@ void Client::recon(int personne)
 
 	sprintf(A,"%s/TOrecon.png",PATH.c_str());
 	sprintf(B,"%s/",PATH.c_str());
-	detectAndDisplay(A,ctr_img,B,1,ptrFace);
-	faces = *ptrFace;
+	detect = detectAndDisplay(A,ctr_img,B,1,ptrFace);
+	if (detect >= 1){
+		faces = *ptrFace;
+		double confianceprec = 0.0;
+		double confiance = 0.0;
+		int label;
+		int predicted_label = -1;
 
-	for (int i = 0; i < faces.size(); i++) {
-		sprintf(sctr_img,"%s/cropresizePIC%d-%i.png",PATH.c_str(),ctr_img,i);
-		Mat img = imread(sctr_img, CV_LOAD_IMAGE_GRAYSCALE);
+		for (int i = 0; i < faces.size(); i++) {
+			sprintf(sctr_img,"%s/cropresizePIC%d-%i.png",PATH.c_str(),ctr_img,i);
+			Mat img = imread(sctr_img, CV_LOAD_IMAGE_GRAYSCALE);
 
-		//Reconnaissance
-		predicted = model->predict(img);
-		current_threshold = model->getDouble("threshold");
-		cout << current_threshold << endl;
+			//Reconnaissance
+	//		for (int j = 0; j < faces.size(); j++){
+				predicted = model->predict(img);
 
-		if (current_threshold == -1){
-			nom = "Inconnu";
+
+//				model->predict(img,predicted_label,confiance);
+//				cout<<predicted_label<<"-"<<confiance<<endl;
+	//			if (confiance > confianceprec){
+	//				label = predicted_label;
+	//			}
+	//			confianceprec = confiance;
+	//		}
+
+					//Ptr<FaceRecognizer>
+	//		current_threshold = model->getDouble("threshold");
+	//		cout << current_threshold << endl;
+
+//			if (confiance > 100){
+//				nom = "Inconnu";
+//			}
+//			else {
+				nom = listeNoms[predicted];
+//			}
+
+			string result_message = format("Predicted person = %s", nom.c_str());
+			cout << result_message << endl;
+
+			Point point1(faces[i].x, faces[i].y);
+			Point point2(faces[i].x + faces[i].width, faces[i].y + faces[i].height);
+			Point point3(point1.x, point1.y-10);
+
+			Mat img2 = imread(A, CV_LOAD_IMAGE_GRAYSCALE);
+			rectangle(img2, point1, point2, Scalar( 255, 0,0, 255 ), 4, 8, 0 );
+			putText(img2, nom, point3, FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(200,200,250), 1, CV_AA);
+			sprintf(sctr_img,"%s/TOrecon.png",PATH.c_str());
+			imwrite(sctr_img, img2);
 		}
-		else {
-			nom = listeNoms[predicted];
-		}
 
-		string result_message = format("Predicted person = %s", nom.c_str());
-		cout << result_message << endl;
-
-		Point point1(faces[i].x, faces[i].y);
-		Point point2(faces[i].x + faces[i].width, faces[i].y + faces[i].height);
-		Point point3(point1.x, point1.y-10);
-
-		Mat img2 = imread(A, CV_LOAD_IMAGE_GRAYSCALE);
-		rectangle(img2, point1, point2, Scalar( 255, 0,0, 255 ), 4, 8, 0 );
-		putText(img2, nom, point3, FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(200,200,250), 1, CV_AA);
-		sprintf(sctr_img,"%s/TOrecon.png",PATH.c_str());
-		imwrite(sctr_img, img2);
 	}
+	else
+	{cout<<"not detected, please take another picture"<<endl;}
 
 }
 
@@ -328,12 +351,17 @@ void Client::clientFork(int mode,int ctr_img, int personne){
 	pid = fork();
 	if(pid == 0)
 	{
-		sprintf(sctr_img,"%s/%s/DetectPIC%u.png",PATH.c_str(),listeNoms[personne].c_str(),ctr_img);
-		imwrite(sctr_img, *img);
-
+		int detect;
 		if (mode == 0){ //Apprentissage
-			writeToCSV(PathCSV,sctr_img, listeNoms[personne], ctr_img);
-			detectAndDisplay(sctr_img,ctr_img,PATH+"/"+listeNoms[personne]);
+			sprintf(sctr_img,"%s/%s/ORIGIN%u.png",PATH.c_str(),listeNoms[personne].c_str(),ctr_img);
+			imwrite(sctr_img, *img);
+			sprintf(sctr_img,"%s/%s/DetectPIC%u.png",PATH.c_str(),listeNoms[personne].c_str(),ctr_img);
+			imwrite(sctr_img, *img);
+			detect = detectAndDisplay(sctr_img,ctr_img,PATH+"/"+listeNoms[personne]);
+			if (detect >= 1){
+				sprintf(sctr_img,"%s/%s/cropresizePIC%u-0.png",PATH.c_str(),listeNoms[personne].c_str(),ctr_img);
+				writeToCSV(PathCSV,sctr_img, listeNoms[personne], ctr_img);
+			}
 		}
 		else if (mode == 1){ //Reconnaissance
 			sprintf(sctr_img,"%s/TOrecon.png",PATH.c_str());
