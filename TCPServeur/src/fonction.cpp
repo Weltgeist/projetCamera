@@ -68,17 +68,7 @@ bool test(uint32_t result, int bit)
 }
 
 
-void captureImage(VideoCapture &capture,Mat &frame)
-{
-	capture >> frame;
-}
 
-
-//void error(const char *msg)
-//{
-//    perror(msg);
-//    exit(1);
-//}
 
 
 uint32_t findState()

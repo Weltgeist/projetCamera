@@ -259,14 +259,17 @@ void Client::recon(int personne)
 	char sctr_img[100];
 	int ctr_img = 0;
 	char A[100];
+	char B[100];
     std::vector<Rect>* ptrFace=new  std::vector<Rect>;
     std::vector<Rect> faces;
+    string nom;
+    int predicted;
+    double current_threshold;
 
 	try {
 		read_csv();
     } catch (const cv::Exception& e) {
         cerr << "Error opening file \"" << PathCSV << "\". Reason: " << e.msg << endl;
-        // nothing more we can do
         exit(1);
     }
 
@@ -287,19 +290,30 @@ void Client::recon(int personne)
 
     //Apprentissage
     Ptr<FaceRecognizer> model =  createLBPHFaceRecognizer();
+    //model->set("threshold", 10.0);
     model->train(listImages, labels_int);
 
-	sprintf(A,"/export/tmp/4205_07/projet/TOrecon.png");
-	detectAndDisplay(A,ctr_img,"/export/tmp/4205_07/projet/",1,ptrFace);
+	sprintf(A,"%s/TOrecon.png",PATH.c_str());
+	sprintf(B,"%s/",PATH.c_str());
+	detectAndDisplay(A,ctr_img,B,1,ptrFace);
 	faces = *ptrFace;
 
 	for (int i = 0; i < faces.size(); i++) {
-		sprintf(sctr_img,"/export/tmp/4205_07/projet/cropresizePIC%d.png",i);
+		sprintf(sctr_img,"%s/cropresizePIC%d.png",PATH.c_str(),i);
 		Mat img = imread(sctr_img, CV_LOAD_IMAGE_GRAYSCALE);
 
-		//Reconaissance
-		int predicted = model->predict(img);
-		string nom = listeNoms[predicted];
+		//Reconnaissance
+		predicted = model->predict(img);
+		current_threshold = model->getDouble("threshold");
+		cout << current_threshold << endl;
+
+		if (current_threshold == -1){
+			nom = "Inconnu";
+		}
+		else {
+			nom = listeNoms[predicted];
+		}
+
 		string result_message = format("Predicted person = %s", nom.c_str());
 		cout << result_message << endl;
 
@@ -307,8 +321,7 @@ void Client::recon(int personne)
 		Point point2(faces[i].x + faces[i].width, faces[i].y + faces[i].height);
 		Point point3(point1.x, point1.y-10);
 
-
-		Mat img2 = imread("/export/tmp/4205_07/projet/TOrecon.png", CV_LOAD_IMAGE_GRAYSCALE);
+		Mat img2 = imread(A, CV_LOAD_IMAGE_GRAYSCALE);
 		rectangle(img2, point1, point2, Scalar( 255, 0,0, 255 ), 4, 8, 0 );
 		putText(img2, nom, point3, FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(200,200,250), 1, CV_AA);
 		sprintf(sctr_img,"%s/TOrecon.png",PATH.c_str());
@@ -323,15 +336,15 @@ void Client::clientFork(int mode,int ctr_img, int personne){
 	pid = fork();
 	if(pid == 0)
 	{
-		sprintf(sctr_img,"/export/tmp/4205_07/projet/%s/cropresizePIC%u.png",listeNoms[personne].c_str(),ctr_img);
+		sprintf(sctr_img,"%s/%s/cropresizePIC%u.png",PATH.c_str(),listeNoms[personne].c_str(),ctr_img);
 		imwrite(sctr_img, *img);
 
 		if (mode == 0){ //Apprentissage
-			writeToCSV("/export/tmp/4205_07/projet/Face_Label_DATA.csv",sctr_img, listeNoms[personne], ctr_img);
+			writeToCSV(PathCSV,sctr_img, listeNoms[personne], ctr_img);
 			detectAndDisplay(sctr_img,ctr_img,PATH+"/"+listeNoms[personne]);
 		}
 		else if (mode == 1){ //Reconnaissance
-			sprintf(sctr_img,"/export/tmp/4205_07/projet/TOrecon.png");
+			sprintf(sctr_img,"%s/TOrecon.png",PATH.c_str());
 			imwrite(sctr_img, *img);
 			recon(personne);
 		}

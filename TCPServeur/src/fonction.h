@@ -24,10 +24,6 @@ void initCapture(VideoCapture &capture,ResolutionFPS &rfps);
 
 bool test(uint32_t result, int bit);
 
-void captureImage(VideoCapture &capture,Mat &frame);
-
-void error(const char *msg);
-
 uint32_t findState();
 
 

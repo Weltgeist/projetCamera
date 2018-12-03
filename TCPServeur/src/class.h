@@ -1,11 +1,6 @@
 #ifndef CLASS_H
 #define CLASS_H
 
-#include<cmath>
-#include<cstring>
-#include<cstdio>
-#include<cstdlib>
-#include<math.h>
 #include<iostream>
 #include<fstream>
 #include<string>
@@ -17,7 +12,9 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-#include <vector>
+#include<opencv2/opencv.hpp>
+
+using namespace cv;
 
 void error(const char *msg);
 
@@ -83,12 +80,21 @@ private:
 	struct sockaddr_in serv_addr, cli_addr; // adress structure
 	int n;
 	socklen_t clilen;
+	char buffer[1024];
+	char *ptrBuffer;
+	int imgSize;
+
 public:
 
-	Serveur();
-	Serveur(int portNum){initServeur(portNum);return;};
+	Serveur(){};
 	~Serveur(){};
+
 	void initServeur(int portNum);
+	void servAccept();
+	uint32_t servSendRecv(uint32_t etat);
+	void servCaptureSend(Mat& frame,VideoCapture &capture);
+	void servClose();
+
 	int get_sockfd()const{ return sockfd; };
 	int get_newsockfd()const{ return newsockfd; };
 	int get_portno()const{ return portno; };
@@ -111,48 +117,11 @@ public:
 		cli_addr.sin_addr.s_addr = INADDR_ANY;
 		cli_addr.sin_port = htons(a);};
 	void set_clilen( socklen_t a){ clilen = a; };
-
-	void servAccept();
-
-
-
-
 };
 
 
 
 #endif
 
-
-//#ifndef CLASS_H
-//#define CLASS_H
-//
-//class Resolution
-//{
-//private:
-//
-//public:
-//	int resX;
-//	int resY;
-//	Resolution(int a=-1 , int b=-1 ):resX(a),resY(b){return;}
-//	~Resolution(){return;}
-//
-//};
-//
-//class ResolutionFPS
-//{
-//private:
-//
-//public:
-//	Resolution res;
-//	double fps;
-//	ResolutionFPS(int a=-1 , int b=-1 , double c=-1):res(a,b),fps(c){return;}
-//	~ResolutionFPS(){return;}
-//	void set_Res(Resolution a){ res.resX=a.resX; res.resY=a.resY; return;}
-//	void set_fps(double a){fps=a; return;}
-//
-//};
-//
-//#endif
 
 

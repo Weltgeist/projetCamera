@@ -1,20 +1,4 @@
-#include<cmath>
-#include<cstring>
-#include<cstdio>
-#include<cstdlib>
-#include<math.h>
-#include<iostream>
-#include<fstream>
-#include<string>
-#include<stdio.h>
-#include<stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <vector>
+
 #include "class.h"
 
 
@@ -46,10 +30,9 @@ void  Serveur::initServeur(int portNum)
 
 	 //Construct a local address structure
 	 bzero((char *) &serv_addr, (uint)sizeof(serv_addr));
-	 portno = portNum;//DEFINE PORT 4099 to be used as default instead of arg[v]//atoi(argv[1]);
 	 serv_addr.sin_family = AF_INET;
 	 serv_addr.sin_addr.s_addr = INADDR_ANY;
-	 serv_addr.sin_port = htons(portno);
+	 serv_addr.sin_port = htons(portNum);
 
 	 //Assign a port to the number with bind() /Bind the local address
 	 if (bind(sockfd, (struct sockaddr *) &serv_addr,
@@ -60,26 +43,52 @@ void  Serveur::initServeur(int portNum)
 	 listen(sockfd,5); //put the socket in passive mode and set 5 as the maximum number for queue
 
 	 clilen = sizeof(cli_addr);
-
-	//cout<<"Init Serveur Complete"<<endl;
-
 }
+
 
 void Serveur::servAccept(){
 
-		 newsockfd = accept(sockfd,
-				 (struct sockaddr *) &cli_addr,
-				 &clilen);
+	 newsockfd = accept(sockfd,(struct sockaddr *) &cli_addr, &clilen);
 	 if (newsockfd < 0)
 	  error("ERROR on accept");
-
-};
-
+}
 
 
+uint32_t Serveur::servSendRecv(uint32_t etat){
+	uint32_t result;
+
+	// Envoyer l'etat au client
+	bzero(buffer,1024);
+	sprintf(buffer,"%u", etat);
+	n = write(newsockfd,buffer,(int)sizeof(etat));
+	if (n < 0){ error("ERROR writing to socket");}
+
+	  // Lire le uint_32 envoye par le client
+	 bzero(buffer,1024);
+	 n = read(newsockfd,buffer,1023);
+	 if (n < 0) error("ERROR reading from socket");
+
+	//Decoder le uint32 soit ici le OK/Quit
+	result = strtol(buffer,&ptrBuffer,10);
+
+	return result;
+}
 
 
+void Serveur::servCaptureSend(Mat& frame, VideoCapture &capture){
+
+	//Capture
+	capture >> frame;
+	imgSize = frame.total()*(frame.elemSize());
+
+	//Send data
+	bytes = send(newsockfd, frame.data, imgSize, 0);
+}
 
 
+void Serveur::servClose(){
+	close(newsockfd);
+	close(sockfd);
+}
 
 
