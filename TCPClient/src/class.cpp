@@ -13,15 +13,6 @@ using namespace std;
 //cpp
 
 
-Resolution operator*(const double factor, const Resolution &b){ return (b*factor); };
-Resolution operator/(const double factor, const Resolution &b){ return (b / factor); };
-
-ResolutionFPS operator*(const double factor, const ResolutionFPS &b){ return (b*factor); };
-ResolutionFPS operator/(const double factor, const ResolutionFPS &b){ return (b / factor); };
-
-
-
-
 void Client::error(const char *msg)
 {
     perror(msg);
@@ -184,10 +175,10 @@ uint32_t Client::clientRcvSend(){
 }
 
 
-void Client::clientInitImg(ResolutionFPS (&rfps)[13], int choix){
+void Client::clientInitImg(Resolution (&res)[13], int choix){
 	// Initialize image for reception
 	img=new Mat;
-	*img= Mat::zeros( rfps[choix].getRes().getY() ,rfps[choix].getRes().getX() , CV_8UC3);
+	*img= Mat::zeros( res[choix].getY() ,res[choix].getX() , CV_8UC3);
 	imgSize = img->total()*(img->elemSize());
 
 	sockData.clear();
@@ -239,6 +230,8 @@ void Client::detectAndDisplay( char* adress,int ctr_img,const string& Path,int m
 		//Resize
 		 if (faceROI.total()>0){
 			 resize(faceROI,faceROI2,defautSIZE);
+			 sprintf(sctr_img,"%s/cropresizePIC%u-%i.png",Path.c_str(),ctr_img,i);
+			 imwrite(sctr_img, faceROI2);
 		 }
 		 else{
 			 cout<<"Pas de face detectee"<<endl;
@@ -247,10 +240,9 @@ void Client::detectAndDisplay( char* adress,int ctr_img,const string& Path,int m
 
 	  sprintf(sctr_img,"%s/DetectPIC%u.png",Path.c_str(),ctr_img);
 	  imwrite(sctr_img, frame);
-	  if (faceROI2.total()>0){
-	  sprintf(sctr_img,"%s/cropresizePIC%u.png",Path.c_str(),ctr_img);
-	  imwrite(sctr_img, faceROI2);
-	  }
+	  if (faces.size()>0){
+
+	 }
  }
 
 
@@ -299,7 +291,7 @@ void Client::recon(int personne)
 	faces = *ptrFace;
 
 	for (int i = 0; i < faces.size(); i++) {
-		sprintf(sctr_img,"%s/cropresizePIC%d.png",PATH.c_str(),i);
+		sprintf(sctr_img,"%s/cropresizePIC%d-%i.png",PATH.c_str(),ctr_img,i);
 		Mat img = imread(sctr_img, CV_LOAD_IMAGE_GRAYSCALE);
 
 		//Reconnaissance
@@ -336,7 +328,7 @@ void Client::clientFork(int mode,int ctr_img, int personne){
 	pid = fork();
 	if(pid == 0)
 	{
-		sprintf(sctr_img,"%s/%s/cropresizePIC%u.png",PATH.c_str(),listeNoms[personne].c_str(),ctr_img);
+		sprintf(sctr_img,"%s/%s/DetectPIC%u.png",PATH.c_str(),listeNoms[personne].c_str(),ctr_img);
 		imwrite(sctr_img, *img);
 
 		if (mode == 0){ //Apprentissage

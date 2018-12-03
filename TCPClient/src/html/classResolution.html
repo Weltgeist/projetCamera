@@ -61,6 +61,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
+      <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -68,7 +69,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -86,37 +87,185 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">Resolution Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Contains the resolution in x and y of the possible images.  
+ <a href="classResolution.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="class_8h_source.html">class.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae05f23d8478b1cc97e547c391aa5ebf4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae05f23d8478b1cc97e547c391aa5ebf4"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Resolution</b> (int a=-1, int b=-1)</td></tr>
+<tr class="memitem:ae05f23d8478b1cc97e547c391aa5ebf4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classResolution.html#ae05f23d8478b1cc97e547c391aa5ebf4">Resolution</a> (int a=-1, int b=-1)</td></tr>
+<tr class="memdesc:ae05f23d8478b1cc97e547c391aa5ebf4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor of the <a class="el" href="classResolution.html" title="Contains the resolution in x and y of the possible images. ">Resolution</a> class.  <a href="#ae05f23d8478b1cc97e547c391aa5ebf4">More...</a><br/></td></tr>
 <tr class="separator:ae05f23d8478b1cc97e547c391aa5ebf4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69c7ed4c219c74e7d4b8eb1fe43e1af2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a69c7ed4c219c74e7d4b8eb1fe43e1af2"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>getX</b> () const </td></tr>
+<tr class="memitem:a2507efd085fed95ede3c378c2f97e8d8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2507efd085fed95ede3c378c2f97e8d8"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classResolution.html#a2507efd085fed95ede3c378c2f97e8d8">~Resolution</a> ()</td></tr>
+<tr class="memdesc:a2507efd085fed95ede3c378c2f97e8d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor of the <a class="el" href="classResolution.html" title="Contains the resolution in x and y of the possible images. ">Resolution</a> class. <br/></td></tr>
+<tr class="separator:a2507efd085fed95ede3c378c2f97e8d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69c7ed4c219c74e7d4b8eb1fe43e1af2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classResolution.html#a69c7ed4c219c74e7d4b8eb1fe43e1af2">getX</a> () const </td></tr>
 <tr class="separator:a69c7ed4c219c74e7d4b8eb1fe43e1af2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc22e08bfab4c7a0a4df584d9d62d84d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afc22e08bfab4c7a0a4df584d9d62d84d"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>getY</b> () const </td></tr>
+<tr class="memitem:afc22e08bfab4c7a0a4df584d9d62d84d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classResolution.html#afc22e08bfab4c7a0a4df584d9d62d84d">getY</a> () const </td></tr>
 <tr class="separator:afc22e08bfab4c7a0a4df584d9d62d84d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9e8682689c02005aeb32e4fe09c8aa4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac9e8682689c02005aeb32e4fe09c8aa4"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setX</b> (int a)</td></tr>
-<tr class="separator:ac9e8682689c02005aeb32e4fe09c8aa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2c47e3a9cb5ba3e965f08e1a979f079"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac2c47e3a9cb5ba3e965f08e1a979f079"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setY</b> (int a)</td></tr>
+<tr class="memitem:ad15d8c942422d285af530d2158c7edaf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classResolution.html#ad15d8c942422d285af530d2158c7edaf">setX</a> (int a)</td></tr>
+<tr class="separator:ad15d8c942422d285af530d2158c7edaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2c47e3a9cb5ba3e965f08e1a979f079"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classResolution.html#ac2c47e3a9cb5ba3e965f08e1a979f079">setY</a> (int a)</td></tr>
 <tr class="separator:ac2c47e3a9cb5ba3e965f08e1a979f079"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec55d9d9972caba3488ed93625926073"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aec55d9d9972caba3488ed93625926073"></a>
-<a class="el" href="classResolution.html">Resolution</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator+</b> (const <a class="el" href="classResolution.html">Resolution</a> &amp;b) const </td></tr>
-<tr class="separator:aec55d9d9972caba3488ed93625926073"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a66d32811eb9de0d83b2ccdc455650549"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a66d32811eb9de0d83b2ccdc455650549"></a>
-<a class="el" href="classResolution.html">Resolution</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator-</b> (const <a class="el" href="classResolution.html">Resolution</a> &amp;b) const </td></tr>
-<tr class="separator:a66d32811eb9de0d83b2ccdc455650549"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b37f7cfde25ea937a7fc5b86ce66384"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6b37f7cfde25ea937a7fc5b86ce66384"></a>
-<a class="el" href="classResolution.html">Resolution</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator*</b> (const double factor) const </td></tr>
-<tr class="separator:a6b37f7cfde25ea937a7fc5b86ce66384"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af10db18ac6ea882ee3c499e4a083d057"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af10db18ac6ea882ee3c499e4a083d057"></a>
-<a class="el" href="classResolution.html">Resolution</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator/</b> (const double factor) const </td></tr>
-<tr class="separator:af10db18ac6ea882ee3c499e4a083d057"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Contains the resolution in x and y of the possible images. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="ae05f23d8478b1cc97e547c391aa5ebf4"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Resolution::Resolution </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>a</em> = <code>-1</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>b</em> = <code>-1</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constructor of the <a class="el" href="classResolution.html" title="Contains the resolution in x and y of the possible images. ">Resolution</a> class. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">a</td><td>The corresponding x value of the resolution. </td></tr>
+    <tr><td class="paramname">b</td><td>The corresponding y value of the resolution. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a69c7ed4c219c74e7d4b8eb1fe43e1af2"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int Resolution::getX </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>The x value of the resolution. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="afc22e08bfab4c7a0a4df584d9d62d84d"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int Resolution::getY </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>The y value of the resolution. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ad15d8c942422d285af530d2158c7edaf"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int Resolution::setX </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>a</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">a</td><td>The x value of the resolution. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ac2c47e3a9cb5ba3e965f08e1a979f079"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Resolution::setY </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>a</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">a</td><td>The y value of the resolution. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li><a class="el" href="class_8h_source.html">class.h</a></li>
 </ul>

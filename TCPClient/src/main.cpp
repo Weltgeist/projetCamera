@@ -1,5 +1,17 @@
 
-//CLIENT///
+/**
+ * \file main.cpp
+ * \brief  Implements the client side of the TCP connection.
+ * Client will create a TCP socket and connect to the server. Client will receive server status and client will send a request for a picture. Client will
+ * receive picture data from Server, create a picture from data and show it. Depending on server status, the picture may be saved and face detection and recognition
+ * may be applied to it. A delay of 30 ms allows the user to quit using the escape key or to change the resolution of the sent picture using "a" key or to change
+ * mode of the program (learning or recognition) using "b" key.
+ * \author ELE4205_07
+ * \version 6.3.2
+ * \date 3 december 2018
+ *
+ */
+
 /*
  * Code taken from https://stackoverflow.com/questions/20314524/c-opencv-image-sending-through-socket
  * createDir-Code taken from https://www.geeksforgeeks.org/create-directoryfolder-cc-program/
@@ -13,6 +25,14 @@
  * Copyright (c) 2011. Philipp Wagner <bytefish[at]gmx[dot]de>.
  * Released to public domain under terms of the BSD Simplified license.
  */
+
+/**
+\mainpage
+The current code is the TCP client part of the project for class ELE4205 for team 07.
+The client allows the user to request a stream of images from the server, to choose in which resolution this image is taken, to do data collection and face recognition.
+\image  TOrecon.png
+The program uses OpenCV as a library for image capture and processing.
+**/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,18 +55,24 @@ using namespace std;
 #define PORT 4099
 #define ELE4205_OK 0b1
 
+
+/**
+ * \var NB_RES
+ * \brief The number of possible resolutions for the camera.
+ */
 const int NB_RES=13;
+
+/**
+ * \var RES_TABLE
+ * \brief The list of possible resolutions with their value in x and y respectively.
+ */
 const int RES_TABLE[13][2]={{176,144},{160,120},{320,176},{320,240},{352,288},{432,240},{800,600},{864,480},{960,544},{960,720},{1184,656},{1280,720},{1280,960}};
-
-
 
 
 /**
  * \fn main
- * \brief Client will create a TCP socket and connect to the server. Client will receive server status and client will send a request for a picture. Client will
- * receive picture data from Server, create a picture from data and show it. Depending on server status, the picture may be saved and face detection and recognition
- * may be applied to it. A delay of 30 ms allows the user to quit using the escape key or to change the resolution of the sent picture using "a" key.
- * @return 0 if ended correctly.
+ * \brief
+ * \return 0 if ended correctly.
  */
 int main()
 {
@@ -58,7 +84,7 @@ int main()
     long int bytes;
     char key;
 	int ctr_img = 0;
-    int mode; //0 training/collect data , 1 reconaissance
+    int mode; //0 training/collect data , 1 recognition
     int personne = 0;
 	Client client;
 	client.set_portno(PORT);
@@ -72,8 +98,8 @@ int main()
 		ctr_img = client.find_ctr_img(personne);
 	}
 	// Populer les resolutions
-	ResolutionFPS rfps[13];
-	populerResolutions(rfps,RES_TABLE);
+	Resolution res[13];
+	populerResolutions(res,RES_TABLE);
    // Load the cascades
    client.loadCascades();
 	// Client initialization
@@ -85,7 +111,7 @@ int main()
 		// Client receives server status and sends request for image
 		state = client.clientRcvSend();
 		// Initialize image for reception
-		client.clientInitImg(rfps,choix);
+		client.clientInitImg(res,choix);
 		// Waitkey for quit, resolution change or mode change
 		key =static_cast<char> (waitKey(30));
 
@@ -112,7 +138,7 @@ int main()
 	   if (key == 27) {break;}
 	   //Create New Message: Ok+RES
 	   if (key == 97){ //a
-		   choix0_3 = choixUser(rfps);
+		   choix0_3 = choixUser(res);
 		   choix = table[choix0_3];
 	   }
 		client.set_messages((choix0_3<<1)+ELE4205_OK);

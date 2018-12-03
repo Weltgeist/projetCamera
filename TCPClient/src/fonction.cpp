@@ -11,20 +11,18 @@ using namespace cv;
 
 
 
-void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2])
+void populerResolutions(Resolution (&res)[13],const int table[][2])
 {
-
 	for (int i=0;i<13;i++)
 	{
-		(frps[i]).setRes(table[i][0],table[i][1]);
-
+		res[i].setX(table[i][0]);
+		res[i].setY(table[i][1]);
 	}
-
 }
 
 
 
-int choixUser(ResolutionFPS (&rfps)[13])
+int choixUser(Resolution (&res)[13])
 {
 	int choix;
 	int table[4]={1,3,9,12};
@@ -32,7 +30,7 @@ int choixUser(ResolutionFPS (&rfps)[13])
 	char* ptr;
 	cout << "Choisissez une resolution parmi les suivantes:\n";
 	for (int i = 0; i < 4; i++){
-		cout << i+1 << ": " << rfps[table[i]].getRes().getX() << "x" << rfps[table[i]].getRes().getY()  << "\n";
+		cout << i+1 << ": " << res[table[i]].getX() << "x" << res[table[i]].getY()  << "\n";
 	}
 	cin >> choix;
 	 std::cin.ignore(std::numeric_limits<char>::max(),'\n');

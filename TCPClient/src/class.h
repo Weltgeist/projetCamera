@@ -1,3 +1,13 @@
+/**
+ * \file class.h
+ * \brief Contains the class definitions of objects Resolution, ResolutionFPS and Client.
+ * \author ELE4205_07
+ * \version 6.3.2
+ * \date 3 december 2018
+ *
+ */
+
+
 #ifndef CLASS_H
 #define CLASS_H
 
@@ -11,58 +21,69 @@
 #include <vector>
 using namespace cv;
 
+/**
+ * \class Resolution
+ * \brief Contains the resolution in x and y of the possible images.
+ */
 class Resolution
 {
 private:
+	/**
+	 * \var resX
+	 * \brief The value in x of the resolution.
+	 */
 	int resX;
+	/**
+	 * \var resY The value in y of the resolution.
+	 */
 	int resY;
 
 public:
 
+	/**
+	 * \fn Resolution(int a = -1, int b = -1)
+	 * \brief Constructor of the Resolution class
+	 * \param a The corresponding x value of the resolution.
+	 * \param b The corresponding y value of the resolution.
+	 */
 	Resolution(int a = -1, int b = -1){ resX=a; resY=b;return; }
+	/**
+	 * \fn ~Resolution()
+	 * \brief Destructor of the Resolution class
+	 */
 	~Resolution(){ return; }
+	/**
+	 * \fn int getX() const
+	 * \brief Accesses the x value.
+	 * \return The x value of the resolution.
+	 */
 	int getX()const{ return resX; };
+	/**
+	 * \fn int getY() const
+	 * \brief Accesses the y value.
+	 * \return The y value of the resolution.
+	 */
 	int getY()const{ return resY; };
+	/**
+	 * \fn int setX(int a)
+	 * \brief Sets the x value.
+	 * \param a The x value of the resolution.
+	 */
 	void setX(int a){ resX = a; };
+	/**
+	 * \fn void setY(int a)
+	 * \brief Sets the y value.
+	 * \param a The y value of the resolution.
+	 */
 	void setY(int a){ resY = a; };
-
-	//Overloading
-	Resolution operator+(const Resolution &b)const{ return Resolution(resX + b.getX(), resY + b.getY()); };
-	Resolution operator-(const Resolution &b)const{ return Resolution(resX - b.getX(), resY - b.getY()); };
-	Resolution operator*(const double factor)const{ return Resolution((int)(resX*factor), (int)(resY*factor)); };
-	Resolution operator/(const double factor)const{ return Resolution((int)(resX / factor), (int)(resY / factor)); };
-
-};
-//
-class ResolutionFPS
-{
-private:
-	Resolution res;
-	double fps;
-public:
-
-	ResolutionFPS(int a = -1, int b = -1, double c = -1) :res(a, b), fps(c){ return; }
-	ResolutionFPS(Resolution a, double c = -1) :res(a), fps(c){ return; }
-	~ResolutionFPS(){ return; }
-	void setRes(Resolution a){ res.setX(a.getX());  res.setY(a.getY()); return; }
-	void setRes(int a,int b){ res.setX(a);  res.setY(b); return; }
-	void setFps(double a){ fps = a; return; }
-	Resolution getRes()const{ return res; };
-	double getFps()const{ return fps; };
-	//Overloading
-	ResolutionFPS operator+(const ResolutionFPS &b)const{ return ResolutionFPS(res + b.getRes(), fps + b.getFps()); };
-	ResolutionFPS operator-(const ResolutionFPS &b)const{ return ResolutionFPS(res - b.getRes(), fps - b.getFps()); };
-	ResolutionFPS operator*(const double factor)const{ return ResolutionFPS(res*factor, fps*factor); };
-	ResolutionFPS operator/(const double factor)const{ return ResolutionFPS(res/factor, fps/factor); };
-
 };
 
-Resolution operator*(const double factor, const Resolution &b);
-Resolution operator/(const double factor, const Resolution &b);
-ResolutionFPS operator*(const double factor, const ResolutionFPS &b);
-ResolutionFPS operator/(const double factor, const ResolutionFPS &b);
 
 
+/**
+ * \class Client
+ * \brief Contains the parameters and functions necessary to create and operate the client in the TCP connection.
+ */
 class Client
 {
 private:
@@ -90,12 +111,17 @@ private:
 
 public:
 
+	/**
+	 * \fn Client()
+	 * \brief Constructor of the class Client. Initializes some constant values such as paths.
+	 */
 	Client(){
 		face_cascade_name = "haarcascade_frontalface_alt.xml" ;
 		eyes_cascade_name = "haarcascade_eye_tree_eyeglasses.xml";
 		PATH="/export/tmp/4205_07/projet"; //Path dans lequel les folders contenant les photos seront places
 		PathCSV = "/export/tmp/4205_07/projet/Face_Label_DATA.csv";
 	}
+
 	~Client(){};
 	void error(const char *msg);
 	void createDir(const string& label);
@@ -106,7 +132,7 @@ public:
 	void initClient();
 	void clientConnect();
 	uint32_t clientRcvSend();
-	void clientInitImg(ResolutionFPS (&rfps)[13], int choix);
+	void clientInitImg(Resolution (&res)[13], int choix);
 	void writeToCSV(const string& CSVfilename,const string& IMGfilename,string label, int ctr_img, char separator=';');
 	void detectAndDisplay( char* adress,int ctr_img,const string& Path,int mode=0, std::vector<Rect>* ptrFace=NULL);
 	void recon(int personne);
