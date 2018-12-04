@@ -29,7 +29,6 @@
 \mainpage
 The current code is the TCP client part of the project for class ELE4205 for team 07.
 The client allows the user to request a stream of images from the server, to choose in which resolution this image is taken, to do data collection and face recognition.
-\image  TOrecon.png
 The program uses OpenCV as a library for image capture and processing.
 **/
 

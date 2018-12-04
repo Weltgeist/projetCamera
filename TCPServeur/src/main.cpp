@@ -21,7 +21,6 @@
 The current code is the TCP server part of the project for class ELE4205 for team 07.
 The server allows the user to send a stream of images according to the resolution demanded by the client.
 The server will determine its state according to presence of light and release of a pushbutton to send to the client.
-\image  ORIGIN1.png
 The program uses OpenCV as a library for image capture and processing.
 **/
  
