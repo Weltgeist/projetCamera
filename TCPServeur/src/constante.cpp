@@ -1,4 +1,3 @@
-//#include<string>
 #include "constante.h"
 #include<cmath>
 #include<cstring>
@@ -17,3 +16,4 @@ using namespace std;
 //enum {NB_RES=13}
 //const int NB_RES=13;
 //const int RES_TABLE[13][2]={{176,144},{160,120},{320,176},{320,240},{352,288},{432,240},{800,600},{864,480},{960,544},{960,720},{1184,656},{1280,720},{1280,960}};
+

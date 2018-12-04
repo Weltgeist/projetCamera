@@ -1,8 +1,7 @@
 /**
  * \file fonction.h
- * \brief Contains the functions called directly from the main program that are not part of the Client object.
+ * \brief Contains the prototypes of the functions called directly from the main program that are not part of the Client object.
  * \author ELE4205_07
- * \version 6.3.2
  * \date 3 december 2018
  *
  */
@@ -18,7 +17,6 @@
 #include<iostream>
 #include<stdlib.h>
 #include "class.h"
-//#include "constante.h"
 
 using namespace cv;
 using namespace std;

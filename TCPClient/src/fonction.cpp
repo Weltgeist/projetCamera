@@ -1,7 +1,12 @@
-
+/**
+ * \file fonction.cpp
+ * \brief  Contains the declarations of the functions called directly from the main program that are not part of the Client object.
+ * \author ELE4205_07
+ * \date 3 december 2018
+ *
+ */
 
 #include "class.h"
-//#include "constante.h"
 #include "fonction.h"
 
 

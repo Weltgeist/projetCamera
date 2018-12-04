@@ -7,7 +7,6 @@
  * may be applied to it. A delay of 30 ms allows the user to quit using the escape key or to change the resolution of the sent picture using "a" key or to change
  * mode of the program (learning or recognition) using "b" key.
  * \author ELE4205_07
- * \version 6.3.2
  * \date 3 december 2018
  *
  */
@@ -46,7 +45,6 @@ The program uses OpenCV as a library for image capture and processing.
 #include <opencv2/opencv.hpp>
 #include <iostream>
 #include"class.h"
-//#include "constante.h"
 #include "fonction.h"
 
 using namespace cv;
@@ -94,7 +92,7 @@ int main()
 	// Choix du mode (apprentissage ou reconnaissance)
 	mode = choixMode();
 	if (mode == 0){
-		personne = client.choixPersonne(ctr_img);
+		personne = client.choixPersonne();
 		ctr_img = client.find_ctr_img(personne);
 	}
 	// Populer les resolutions
@@ -145,7 +143,7 @@ int main()
 		if (key == 98){ //b
 			mode = choixMode();
 			if (mode == 0){
-				personne = client.choixPersonne(ctr_img);
+				personne = client.choixPersonne();
 				ctr_img = client.find_ctr_img(personne);
 			}
 		}

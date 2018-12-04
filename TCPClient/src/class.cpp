@@ -1,3 +1,11 @@
+/**
+ * \file class.cpp
+ * \brief Contains the function definitions of classes Resolution and Client.
+ * \author ELE4205_07
+ * \date 3 december 2018
+ *
+ */
+
 
 #include<cstdio>
 #include<cstdlib>
@@ -10,7 +18,6 @@
 
 using namespace std;
 
-//cpp
 
 
 void Client::error(const char *msg)
@@ -32,7 +39,7 @@ void Client::createDir(const string& label)
 }
 
 
-int Client::choixPersonne(int ctr_img)
+int Client::choixPersonne()
 {
 	int personne = 0;
 	string nom;
@@ -128,7 +135,6 @@ int Client::find_ctr_img(int personne)
 
 void Client::loadCascades(){
 	if( !face_cascade.load( face_cascade_name ) ){ printf("--(!)Error loading\n"); };
-	if( !eyes_cascade.load( eyes_cascade_name ) ){ printf("--(!)Error loading\n"); };
 }
 
 
@@ -191,7 +197,6 @@ void Client::writeToCSV(const string& CSVfilename,const string& IMGfilename,stri
 	ofstream file(CSVfilename.c_str(),ofstream::app);
     if (!file) {
         string error_message = "No valid input file was given, please check the given filename.";
-        //CV_Error(Error::StsBadArg, error_message);
         cout<<error_message<<endl;
     }
     else
@@ -225,7 +230,6 @@ int Client::detectAndDisplay( char* adress,int ctr_img,const string& Path,int mo
 		Point point1(faces[i].x, faces[i].y);
 		Point point2(faces[i].x + faces[i].width,faces[i].y + faces[i].height);
 		rectangle(frame, point1, point2, Scalar( 255, 0,0, 255 ), 4, 8, 0 );
-
 		//Crop
 		 Mat faceROI = frame_gray( faces[i] );
 		//Resize
@@ -236,13 +240,10 @@ int Client::detectAndDisplay( char* adress,int ctr_img,const string& Path,int mo
 			 detect = faces.size();
 		 }
 	  }
-
 	  sprintf(sctr_img,"%s/DetectPIC%u.png",Path.c_str(),ctr_img);
 	  imwrite(sctr_img, frame);
 	  if (faces.size()>0){
-
 	 }
-
 	  return detect;
  }
 
@@ -267,10 +268,11 @@ void Client::recon(int personne)
         exit(1);
     }
 
+    //convertis labels(liste de string) en label(liste de int) pour train fonction
     vector<int> labels_int;
 	for (int i = 0; i < labels.size(); i++){
 		for (int j = 0; j < listeNoms.size(); j++){
-			//std::vector<Rect> faces;convertis labels(liste de string) en label(liste de int) pour train fonction
+
 			if (labels[i].compare(listeNoms[j]) == 0) {
 				labels_int.push_back(j);
 			}
@@ -284,7 +286,6 @@ void Client::recon(int personne)
 
     //Apprentissage
     Ptr<FaceRecognizer> model =  createLBPHFaceRecognizer();
-    //model->set("threshold", 10.0);
     model->train(listImages, labels_int);
 
 	sprintf(A,"%s/TOrecon.png",PATH.c_str());
@@ -292,38 +293,13 @@ void Client::recon(int personne)
 	detect = detectAndDisplay(A,ctr_img,B,1,ptrFace);
 	if (detect >= 1){
 		faces = *ptrFace;
-		double confianceprec = 0.0;
-		double confiance = 0.0;
-		int label;
-		int predicted_label = -1;
-
 		for (int i = 0; i < faces.size(); i++) {
 			sprintf(sctr_img,"%s/cropresizePIC%d-%i.png",PATH.c_str(),ctr_img,i);
 			Mat img = imread(sctr_img, CV_LOAD_IMAGE_GRAYSCALE);
 
 			//Reconnaissance
-	//		for (int j = 0; j < faces.size(); j++){
-				predicted = model->predict(img);
-
-
-//				model->predict(img,predicted_label,confiance);
-//				cout<<predicted_label<<"-"<<confiance<<endl;
-	//			if (confiance > confianceprec){
-	//				label = predicted_label;
-	//			}
-	//			confianceprec = confiance;
-	//		}
-
-					//Ptr<FaceRecognizer>
-	//		current_threshold = model->getDouble("threshold");
-	//		cout << current_threshold << endl;
-
-//			if (confiance > 100){
-//				nom = "Inconnu";
-//			}
-//			else {
-				nom = listeNoms[predicted];
-//			}
+			predicted = model->predict(img);
+			nom = listeNoms[predicted];
 
 			string result_message = format("Predicted person = %s", nom.c_str());
 			cout << result_message << endl;

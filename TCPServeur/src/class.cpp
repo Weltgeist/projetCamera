@@ -1,15 +1,17 @@
 
+/**
+ * \file class.cpp
+ * \brief Contains the function declarations for objects Resolution and Serveur.
+ * \author ELE4205_07
+ * \date 3 december 2018
+ *
+ */
+
 #include "class.h"
 
 
 //cpp
 
-
-Resolution operator*(const double factor, const Resolution &b){ return (b*factor); };
-Resolution operator/(const double factor, const Resolution &b){ return (b / factor); };
-
-ResolutionFPS operator*(const double factor, const ResolutionFPS &b){ return (b*factor); };
-ResolutionFPS operator/(const double factor, const ResolutionFPS &b){ return (b / factor); };
 
 void error(const char *msg)
 {

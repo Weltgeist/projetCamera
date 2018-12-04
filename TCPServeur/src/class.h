@@ -1,3 +1,12 @@
+/**
+ * \file class.h
+ * \brief Contains the class definitions of objects Resolution and Serveur.
+ * \author ELE4205_07
+ * \date 3 december 2018
+ *
+ */
+
+
 #ifndef CLASS_H
 #define CLASS_H
 
@@ -18,8 +27,10 @@ using namespace cv;
 
 void error(const char *msg);
 
-//CPP
-
+/**
+ * \class Resolution
+ * \brief Contains the resolution in x and y of the possible images.
+ */
 class Resolution
 {
 private:
@@ -27,51 +38,50 @@ private:
 	int resY;
 
 public:
-
+	/**
+	 * \fn Resolution(int a = -1, int b = -1)
+	 * \brief Constructor of the Resolution class
+	 * \param a The corresponding x value of the resolution.
+	 * \param b The corresponding y value of the resolution.
+	 */
 	Resolution(int a = -1, int b = -1){ resX=a; resY=b;return; }
+	/**
+	 * \fn ~Resolution()
+	 * \brief Destructor of the Resolution class
+	 */
 	~Resolution(){ return; }
+	/**
+	 * \fn int getX() const
+	 * \brief Accesses the x value.
+	 * \return The x value of the resolution.
+	 */
 	int getX()const{ return resX; };
+	/**
+	 * \fn int getY() const
+	 * \brief Accesses the y value.
+	 * \return The y value of the resolution.
+	 */
 	int getY()const{ return resY; };
+	/**
+	 * \fn int setX(int a)
+	 * \brief Sets the x value.
+	 * \param a The x value of the resolution.
+	 */
 	void setX(int a){ resX = a; };
+	/**
+	 * \fn void setY(int a)
+	 * \brief Sets the y value.
+	 * \param a The y value of the resolution.
+	 */
 	void setY(int a){ resY = a; };
 
-	//Overloading
-	Resolution operator+(const Resolution &b)const{ return Resolution(resX + b.getX(), resY + b.getY()); };
-	Resolution operator-(const Resolution &b)const{ return Resolution(resX - b.getX(), resY - b.getY()); };
-	Resolution operator*(const double factor)const{ return Resolution((int)(resX*factor), (int)(resY*factor)); };
-	Resolution operator/(const double factor)const{ return Resolution((int)(resX / factor), (int)(resY / factor)); };
-
-};
-//
-class ResolutionFPS
-{
-private:
-	Resolution res;
-	double fps;
-public:
-
-	ResolutionFPS(int a = -1, int b = -1, double c = -1) :res(a, b), fps(c){ return; }
-	ResolutionFPS(Resolution a, double c = -1) :res(a), fps(c){ return; }
-	~ResolutionFPS(){ return; }
-	void setRes(Resolution a){ res.setX(a.getX());  res.setY(a.getY()); return; }
-	void setRes(int a,int b){ res.setX(a);  res.setY(b); return; }
-	void setFps(double a){ fps = a; return; }
-	Resolution getRes()const{ return res; };
-	double getFps()const{ return fps; };
-	//Overloading
-	ResolutionFPS operator+(const ResolutionFPS &b)const{ return ResolutionFPS(res + b.getRes(), fps + b.getFps()); };
-	ResolutionFPS operator-(const ResolutionFPS &b)const{ return ResolutionFPS(res - b.getRes(), fps - b.getFps()); };
-	ResolutionFPS operator*(const double factor)const{ return ResolutionFPS(res*factor, fps*factor); };
-	ResolutionFPS operator/(const double factor)const{ return ResolutionFPS(res/factor, fps/factor); };
-
 };
 
-Resolution operator*(const double factor, const Resolution &b);
-Resolution operator/(const double factor, const Resolution &b);
-ResolutionFPS operator*(const double factor, const ResolutionFPS &b);
-ResolutionFPS operator/(const double factor, const ResolutionFPS &b);
 
-
+/**
+ * \class Serveur
+ * \brief Contains the parameters and functions necessary to create and operate the server in the TCP connection.
+ */
 class Serveur
 {
 private:
@@ -85,38 +95,48 @@ private:
 	int imgSize;
 
 public:
-
+	/**
+	 * \fn Serveur()
+	 * \brief Constructor of the class Serveur.
+	 */
 	Serveur(){};
+	/**
+	 * \fn ~Serveur()
+	 * \brief Destructor of the class Serveur.
+	 */
 	~Serveur(){};
-
+	
+	/**
+	 * \fn void initServeur(int portNum)
+	 * \brief Initializes the server TCP socket with socket and bind and listens for the connect request of the client.
+	 * \param portNum The port number of the socket.
+	 */
 	void initServeur(int portNum);
+	/**
+	 * \fn void servAccept()
+	 * \brief Accepts the connect request of the client.
+	 */
 	void servAccept();
+	/**
+	 * \fn void initServeur(int portNum)
+	 * \brief Sends the determined state to the client and receives the uint32_t image request from the client.
+	 * \param etat The state of the server as determined from the light sensor and push-button drivers.
+	 * \return The result of the image request, whether ok or quit.
+	 */
 	uint32_t servSendRecv(uint32_t etat);
+	/**
+	 * \fn void servCaptureSend(Mat& frame,VideoCapture &capture);
+	 * \brief Captures a frame using parameters and sends the data to the client.
+	 * \param frame The previously initialized Mat image.
+	 * \param capture The capture VideoCapture object as defined in OpenCV.
+	 */
 	void servCaptureSend(Mat& frame,VideoCapture &capture);
+	/**
+	 * \fn void servClose()
+	 * \brief Closes the TCP socket.
+	 */
 	void servClose();
 
-	int get_sockfd()const{ return sockfd; };
-	int get_newsockfd()const{ return newsockfd; };
-	int get_portno()const{ return portno; };
-	int get_n()const{ return n; };
-	long int get_bytes()const{ return bytes; };
-	struct sockaddr_in  get_serv_addr()const{ return serv_addr; };
-	struct sockaddr_in  get_cli_addr()const{ return cli_addr; };
-	socklen_t  get_clilen()const{ return clilen; };
-	void set_sockfd(int a){ sockfd = a; };
-	void set_newsockfd(int a){ newsockfd = a; };
-	void set_portno(int a){ portno = a; };
-	void set_n( int a){ n = a; };
-	void set_bytes(long int a){ bytes = a; };
-	void set_serv_addr(int a){
-		serv_addr.sin_family = AF_INET;
-	 serv_addr.sin_addr.s_addr = INADDR_ANY;
-	 serv_addr.sin_port = htons(a);};
-	void set_cli_addr(int a){
-		cli_addr.sin_family = AF_INET;
-		cli_addr.sin_addr.s_addr = INADDR_ANY;
-		cli_addr.sin_port = htons(a);};
-	void set_clilen( socklen_t a){ clilen = a; };
 };
 
 
