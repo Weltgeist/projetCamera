@@ -30,7 +30,7 @@ using namespace std;
 int detectCamera();
 
 /**
- * \fn void populerResolutions(ResolutionFPS (&frps)[13],const int table[][2])
+ * \fn void populerResolutions(Resolution (&res)[13],const int table[][2])
  * \brief Pass an object table by reference and assign resolutions X and Y to each instantiation .
  * \param frps The table of possible resolutions and fps, empty when passed in parameters.
  * \param table The constant table containing the possible resolutions.
@@ -38,7 +38,7 @@ int detectCamera();
 void populerResolutions(Resolution (&res)[13],const int table[][2]);
 
 /**
- * \fn void initCapture(VideoCapture &capture,ResolutionFPS &rfps)
+ * \fn void initCapture(VideoCapture &capture,Resolution &res)
  * \brief Sets the values of the desired resolution to object capture.
  * \param capture The object that allows the capture of an image as defined in OpenCV
  * \param rfps The filled table of possible resolutions of the camera.

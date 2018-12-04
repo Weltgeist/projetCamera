@@ -110,6 +110,7 @@ Program is controlled by either interface outputs connected to board or by a hid
 
 ### Training mode
 **Has to be selected first. At least two users have to be created, each having taken around 20 pictures. **  
+**There has to be only one face in the picture **  
 Responsible of detecting faces and storing them.  
 After clicking b and choosing mode 1, you will have a prompt to create a new user(create a new user folder with new images) or to log in into a existing user (update a existing user folder with new images)
 1. 0 To create a new user and folder
