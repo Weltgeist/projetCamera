@@ -18,12 +18,10 @@ The goal of this project is to interface an Odroid-c2 board with a webcam to a c
 ***
 
 ### Prerequisite
-Hardware:
+Hardware:  
 1. Odroid-c2 embedded microcontrollor with a pre-installed OS,in this case a Yocto image.  
 2. Scientific Linux 7.5 Computer  
 3. USB Logitech c270 webcam  
-
-**Alternative configuration may work, but has not been tested**
 
 ***
 
@@ -89,9 +87,9 @@ Additional steps will be needed to configure certain GPIOs of embedded control a
 ## The functionalities
 
 ### Initialization
-1.TCPServeur should be run first. Run command:
+1. TCPServeur should be run first. Run command:
 > ./TCPServeur
-2.Program will open a terminal window. Wait until "Ready to accept" appears in terminal window, then execute the command:
+2. Program will open a terminal window. Wait until "Ready to accept" appears in terminal window, then execute the command:
 > ./TCPClient
 
 ### Main Menu
@@ -101,18 +99,18 @@ Program is controlled by either interface outputs connected to board or by a hid
 1. Light receptor: Will stop streaming if there are bad lighting conditions or if it's covered.
 2. Push button: Main input to take a action, forks program to needed fonctions.
 #### Software
-1. Key:*a*-will display Resolution menu.
+1. Key *a* will display Resolution menu.  
 	*Inputs:  1-160X120 2-320X240 3- 960X720 4-1280X960 -will change window size
-2. Key:*b*-will display mode menu. 
-	*Inputs: 1-Training(Apprentissage),1-Recognition(Reconaissance)-will fork to corresponding mode
-3. Key:*Esc-Key*-will exit client module and send a quit signal to server modules and close
+2. Key *b* will display mode menu.   
+	*Inputs: 1-Training(Apprentissage),2-Recognition(Reconaissance) -will fork to corresponding mode
+3. Key *Esc* will exit client module and send a quit signal to server modules and close the programs.
 
-**To use Keys, streaming window must be selected **  
-**To use inputs, must click inside terminal window write input and click enter, you will have to go back after to window to see change **
+**To use Keys, streaming window must be selected. **  
+**To use inputs, must click inside terminal window write input and click enter, you will have to go back after to window to see change. **
 
 ### Training mode
-**Has to be selected first. At least two users have to be created, each having taken around 20 pictures **
-Responsible of detecting faces and storing them.
+**Has to be selected first. At least two users have to be created, each having taken around 20 pictures. **  
+Responsible of detecting faces and storing them.  
 After clicking b and choosing mode 1, you will have a prompt to create a new user(create a new user folder with new images) or to log in into a existing user (update a existing user folder with new images)
 1. 0 To create a new user and folder
 2. Any number to to log in into existing user
@@ -120,14 +118,14 @@ After clicking b and choosing mode 1, you will have a prompt to create a new use
 It will also update the CSV file with new image path.
 
 ### Recognition mode
-**Can be selected only once at least two users have been created and taken around 20 pictures in training mode **
-It will load all face sub folder and create a face trained model.
-Then any click of the pushbutton will save ToRecon original picture,ToRecon  detected picture and ToRecon  resized face picture in the corresponding current folder.
+**Can be selected only once at least two users have been created and taken around 20 pictures in training mode. **  
+It will load all face sub folder and create a face trained model.  
+Then any click of the push-button will save ToRecon original picture, ToRecon detected picture and ToRecon resized face picture in the corresponding current folder.  
 It will use recognition algorithm to compared resize face(if any) to face trained model and output prediction in format of a new picture with name written on it.
 
 ### Log out/Tag out
 1. Use Esc-Key
-2. Save files elsewhere and delete in succession these folders and files.
+2. Save files elsewhere and delete in succession these folders, files and file contents.
 	1. Delete ALL **generated** user picture sub-folders.
 	2. Delete ToRecon,CropResizePic and DetectedPic .png files in current folder 
 	3. Open Face_Label_Data.csv with text editor and clear all data for futur use. CTRL-A, CTRL-X,CTRL-S.
