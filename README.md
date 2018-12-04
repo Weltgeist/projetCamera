@@ -19,9 +19,9 @@ The goal of this project is to interface an Odroid-c2 board with a webcam to a c
 
 ### Prerequisite
 Hardware:
-1. Odroid-c2 embedded microcontrollor with a pre-installed OS,in this case a Yocto image.
-2. Scientific Linux 7.5 Computer
-3. USB Logitech c270 webcam
+1. Odroid-c2 embedded microcontrollor with a pre-installed OS,in this case a Yocto image.  
+2. Scientific Linux 7.5 Computer  
+3. USB Logitech c270 webcam  
 
 **Alternative configuration may work, but has not been tested**
 
@@ -29,15 +29,15 @@ Hardware:
 
 ### Documentation
 Open CV version installed on Scientific Linux 7.5:
-https://docs.opencv.org/2.4.5/
+https://docs.opencv.org/2.4.5/  
 Open CV version installed on the Odroid-C2:
-https://docs.opencv.org/3.1.0/
+https://docs.opencv.org/3.1.0/  
 Yocto:
-https://www.yoctoproject.org/
+https://www.yoctoproject.org/  
 Face Recognition:
-https://docs.opencv.org/3.4/da/d60/tutorial_face_main.html
+https://docs.opencv.org/3.4/da/d60/tutorial_face_main.html  
 Tutorial:
-https://www.superdatascience.com/opencv-face-recognition/?fbclid=IwAR06Q9KKUCob0067iXzQogP6oozvgMveGPpSD-v7IscJ1Mi1DOHSWlYcrlw
+https://www.superdatascience.com/opencv-face-recognition/?fbclid=IwAR06Q9KKUCob0067iXzQogP6oozvgMveGPpSD-v7IscJ1Mi1DOHSWlYcrlw  
 
 ***
 
@@ -50,7 +50,7 @@ The repository is divided in two subfolders, the TCP client and TCP server.
 The TCPClient folder contains the source code for the executable that will run on the computer. Create a sister folder named debug, in which you will have to compile and "make" the code with the following instructions in the terminal, or the equivalent:
 
 #### Terminal
-> cmake -DCMAKE_BUILD_TYPE=Release ../src
+> cmake -DCMAKE_BUILD_TYPE=Release ../src  
 > make
 
 ### TCPServeur
@@ -58,10 +58,10 @@ The TCPClient folder contains the source code for the executable that will run o
 The TCPServeur folder contains the source code for the executable that will run on the Odroid-c2. Create a sister folder named debug, in which you will have to compile and "make" the code with the following instructions in the terminal, or the equivalent:
 
 #### Terminal
-> bash
-> source /export/tmp/4205_07/opt/poky/environment-setup-aarch64-poky-linux
-> cmake -DCMAKE_BUILD_TYPE=Release \ -DOpenCV_DIR:STRING="/export/tmp/4205_nn/poky/build-oc2/tmp/sysroots/odroid-c2/usr/share/OpenCV" ../src
-> make
+> bash  
+> source /export/tmp/4205_07/opt/poky/environment-setup-aarch64-poky-linux  
+> cmake -DCMAKE_BUILD_TYPE=Release \ -DOpenCV_DIR:STRING="/export/tmp/4205_nn/poky/build-oc2/tmp/sysroots/odroid-c2/usr/share/OpenCV" ../src  
+> make  
 > scp TCPServeur root@192.168.7.2:/home/root
 
 ***
@@ -76,10 +76,10 @@ Additional steps will be needed to configure certain GPIOs of embedded control a
 3. Clean known_hosts files.
 > gedit .ssh/known_hosts
 4. Connect to Odroid via ssh and set up pin configuration
-> ssh root@192.168.7.2 
-> echo 228 > /sys/class/gpio/export
-> echo in > /sys/class/gpio/gpio228/direction
-> exit
+> ssh root@192.168.7.2   
+> echo 228 > /sys/class/gpio/export  
+> echo in > /sys/class/gpio/gpio228/direction  
+> exit  
 5. Download file "haarcascade_frontalface_alt.xml" and put it in the same folder as your client's executable.
 6. In the code, in the client's class.h, change the values for the path and csv file to fit your computer.
 7. Create a blank file named "Face\_Label\_DATA.csv" in the repository identified in your path.
@@ -89,9 +89,9 @@ Additional steps will be needed to configure certain GPIOs of embedded control a
 ## The functionalities
 
 ### Initialization
-TCPServeur should be run first. Run command:
+1.TCPServeur should be run first. Run command:
 > ./TCPServeur
-Program will open a terminal window. Wait until "Ready to accept" appears in terminal window, then execute the command:
+2.Program will open a terminal window. Wait until "Ready to accept" appears in terminal window, then execute the command:
 > ./TCPClient
 
 ### Main Menu
@@ -107,7 +107,7 @@ Program is controlled by either interface outputs connected to board or by a hid
 	*Inputs: 1-Training(Apprentissage),1-Recognition(Reconaissance)-will fork to corresponding mode
 3. Key:*Esc-Key*-will exit client module and send a quit signal to server modules and close
 
-**To use Keys, streaming window must be selected **
+**To use Keys, streaming window must be selected **  
 **To use inputs, must click inside terminal window write input and click enter, you will have to go back after to window to see change **
 
 ### Training mode
