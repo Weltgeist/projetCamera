@@ -1,2 +1,4 @@
 debug/
 *.png
+/*/src/latex
+/*/src/html
